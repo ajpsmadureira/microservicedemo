@@ -59,6 +59,8 @@ class UserServiceTest {
         testUserEntity = TestDataFactory.createTestUserEntity();
     }
 
+    // TODO: add negative scenarios
+
     @Test
     void getAllUsers_ShouldReturnAllUsers() {
 

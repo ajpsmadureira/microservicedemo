@@ -12,6 +12,8 @@ import com.crm.mapper.user.UserCreateRequestToUserMapper;
 import com.crm.mapper.user.UserToUserResponseMapper;
 import com.crm.mapper.user.UserUpdateRequestToUserMapper;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,7 +88,7 @@ public class UserController {
     @Operation(summary = "Create new user", description = "Create a new user in the system")
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "User successfully created",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
             ),
@@ -97,13 +99,13 @@ public class UserController {
             )
     })
     @PostMapping
-    public UserResponse createUser(@Parameter(description = "User details", required = true) @Valid @RequestBody UserCreateRequest userCreateRequest) {
+    public ResponseEntity<UserResponse> createUser(@Parameter(description = "User details", required = true) @Valid @RequestBody UserCreateRequest userCreateRequest) {
 
-        return Optional.of(userCreateRequest)
+        return new ResponseEntity<>(Optional.of(userCreateRequest)
                 .map(userCreateRequestToUserMapper::map)
                 .map(userService::createUser)
                 .map(userToUserResponseMapper::map)
-                .orElseThrow(ControllerException::new);
+                .orElseThrow(ControllerException::new), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update user", description = "Update an existing user's information")

@@ -10,6 +10,6 @@ public class CustomerResponse {
     private final Long id;
     private final String name;
     private final String surname;
-    private final Long createdById;
-    private final Long lastModifiedById;
+    private final Long createdByUserId;
+    private final Long lastModifiedByUserId;
 } 

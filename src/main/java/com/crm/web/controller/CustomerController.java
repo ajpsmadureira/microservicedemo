@@ -14,9 +14,9 @@ import com.crm.exception.ControllerException;
 import com.crm.mapper.customer.CustomerToCustomerResponseMapper;
 import com.crm.web.api.customer.CustomerUpdateRequest;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
-import jakarta.validation.Valid;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -95,7 +95,7 @@ public class CustomerController {
     @Operation(summary = "Create new customer", description = "Create a new customer by providing name and surname")
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Customer successfully created",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerResponse.class))
             ),
@@ -106,15 +106,15 @@ public class CustomerController {
             )
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CustomerResponse createCustomer(
-            @Parameter(description = "Customer details", required = true) @Valid @RequestBody CustomerCreateRequest customerCreateRequest
+    public ResponseEntity<CustomerResponse> createCustomer(
+            @Parameter(description = "Customer details", required = true) @RequestBody CustomerCreateRequest customerCreateRequest
     ) {
 
-        return Optional.of(customerCreateRequest)
+        return new ResponseEntity<>(Optional.of(customerCreateRequest)
                 .map(customerCreateRequestToCustomerMapper::map)
                 .map(customer -> customerService.createCustomer(customer, authService.getCurrentUser()))
                 .map(customerToCustomerResponseMapper::map)
-                .orElseThrow(ControllerException::new);
+                .orElseThrow(ControllerException::new), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update customer details", description = "Update an existing customer's details.")
@@ -133,7 +133,7 @@ public class CustomerController {
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public CustomerResponse updateCustomer(
             @Parameter(description = "Customer ID", required = true) @PathVariable Long id,
-            @Parameter(description = "Updated customer details", required = true) @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest
+            @Parameter(description = "Updated customer details", required = true) @RequestBody CustomerUpdateRequest customerUpdateRequest
     ) {
 
         return Optional.of(customerUpdateRequest)

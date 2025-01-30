@@ -90,7 +90,6 @@ The API documentation is available through Swagger UI when running in developmen
 
 #### Authentication
 - POST `/api/auth/login` - Authenticate userEntity
-- POST `/api/auth/register` - Register new userEntity
 
 #### Users (Admin only)
 - GET `/api/admin/users` - List all users
@@ -103,7 +102,9 @@ The API documentation is available through Swagger UI when running in developmen
 #### Customers
 - GET `/api/customers` - List all customers
 - GET `/api/customers/{id}` - Get customerEntity by ID
-- POST `/api/customers` - Create customerEntity with optional photo
+- POST `/api/customers` - Create customerEntity
+- GET `/api/customers/{id}/photo` - Get customer photo by ID
+- POST `/api/customers/{id}/photo` - Set customer photo
 - PUT `/api/customers/{id}` - Update customerEntity
 - DELETE `/api/customers/{id}` - Delete customerEntity
 
@@ -187,12 +188,13 @@ src/
 │   ├── java/
 │   │   └── com/crm/
 │   │       ├── config/         # Configuration classes
-│   │       ├── controller/     # REST controllers
-│   │       ├── domain/        # Entity classes
-│   │       ├── exception/     # Exception handling
-│   │       ├── repository/    # Data access
-│   │       ├── security/      # Security config
-│   │       └── service/       # Business logic
+│   │       ├── domain/         # Domain objects
+│   │       ├── exception/      # Exception handling
+│   │       ├── mapper/         # Mappers
+│   │       ├── persistence/    # Data access
+│   │       ├── security/       # Security config
+│   │       ├── service/        # Business logic
+│   │       └── web/            # REST controllers and API DTOs
 │   └── resources/
 │       ├── application.yml
 │       ├── application-dev.yml
@@ -200,7 +202,8 @@ src/
 └── test/
     └── java/
         └── com/crm/
-            ├── controller/     # Controller tests
+            ├── config/        # Test configuration
+            ├── web/           # Web layer tests
             ├── service/       # Service tests
             └── util/          # Test utilities
 ```
@@ -265,5 +268,3 @@ curl -X POST http://localhost:8080/api/auth/register \
     "email": "userEntity@example.com"
   }'
 ```
-
-Note: Only admin users can create other admin users through the `/api/admin/users` endpoint.

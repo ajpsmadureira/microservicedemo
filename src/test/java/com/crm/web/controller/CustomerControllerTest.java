@@ -96,7 +96,7 @@ class CustomerControllerTest {
         mockMvc.perform(post("/api/customers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testCustomer)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(testCustomer.getName()))
                 .andExpect(jsonPath("$.surname").value(testCustomer.getSurname()));
     }

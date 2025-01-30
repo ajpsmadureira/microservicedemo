@@ -2,6 +2,7 @@ package com.crm.service;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import com.crm.domain.Customer;
 import com.crm.domain.User;
@@ -49,7 +50,7 @@ public class CustomerService {
 
         try {
 
-            UserEntity currentUserEntity = findUserById(currentUser.getId());
+            UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
             CustomerEntity customerEntity = new CustomerEntity();
 
@@ -73,12 +74,13 @@ public class CustomerService {
 
         try {
 
-            CustomerEntity customerEntity = findCustomerById(id);
+            CustomerEntity customerEntity = findCustomerByIdOrThrowException(id);
 
-            if (customer.getName() != null) customerEntity.setName(customer.getName());
-            if (customer.getSurname() != null) customerEntity.setSurname(customer.getSurname());
+            Optional.ofNullable(customer.getName()).ifPresent(customerEntity::setName);
 
-            UserEntity currentUserEntity = findUserById(currentUser.getId());
+            Optional.ofNullable(customer.getSurname()).ifPresent(customerEntity::setSurname);
+
+            UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
             customerEntity.setLastModifiedBy(currentUserEntity);
             
@@ -100,7 +102,7 @@ public class CustomerService {
 
         try {
 
-            customerEntity = findCustomerById(id);
+            customerEntity = findCustomerByIdOrThrowException(id);
 
             oldPhotoUrl = customerEntity.getPhotoUrl();
 
@@ -110,7 +112,7 @@ public class CustomerService {
                 customerEntity.setPhotoUrl(photoUrl);
             }
 
-            UserEntity currentUserEntity = findUserById(currentUser.getId());
+            UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
             customerEntity.setLastModifiedBy(currentUserEntity);
 
@@ -118,7 +120,6 @@ public class CustomerService {
 
             // Delete old photo if new one was uploaded successfully
             if (oldPhotoUrl != null && !oldPhotoUrl.equals(updatedCustomerEntity.getPhotoUrl())) {
-
                 fileStorageService.deleteFile(oldPhotoUrl);
             }
         } catch (Exception e) {
@@ -147,11 +148,11 @@ public class CustomerService {
 
         try {
 
-            CustomerEntity customerEntity = findCustomerById(id);
+            CustomerEntity customerEntity = findCustomerByIdOrThrowException(id);
 
             customerRepository.deleteById(id);
 
-            if (customerEntity.getPhotoUrl() != null) fileStorageService.deleteFile(customerEntity.getPhotoUrl());
+            Optional.ofNullable(customerEntity.getPhotoUrl()).ifPresent(fileStorageService::deleteFile);
 
         } catch (Exception e) {
 
@@ -159,12 +160,12 @@ public class CustomerService {
         }
     }
 
-    private UserEntity findUserById(Long id) {
+    private UserEntity findUserByIdOrThrowException(Long id) {
 
         return userRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find user with id: " + id));
     }
 
-    private CustomerEntity findCustomerById(Long id) {
+    private CustomerEntity findCustomerByIdOrThrowException(Long id) {
 
         return customerRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find customer with id: " + id));
     }

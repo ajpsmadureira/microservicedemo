@@ -3,6 +3,8 @@ package com.crm.web.controller;
 import com.crm.web.api.auth.LoginRequest;
 import com.crm.web.api.auth.LoginResponse;
 import com.crm.exception.ErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,16 +44,16 @@ public class AuthController {
     @Operation(summary = "Login user", description = "Authenticate a user and return a JWT token")
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Successfully authenticated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponse.class))
             )
     })
     @PostMapping("/login")
-    public LoginResponse login(@Parameter(description = "Login credentials", required = true) @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Parameter(description = "Login credentials", required = true) @RequestBody LoginRequest loginRequest) {
 
         String token = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
-        return LoginResponse.builder().token(token).build();
+        return new ResponseEntity<>(LoginResponse.create(token), HttpStatus.CREATED);
     }
 }
