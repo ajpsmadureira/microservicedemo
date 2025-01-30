@@ -1,11 +1,9 @@
 package com.crm.web.api.auth;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
 
-@Data
-@Builder
+@Value(staticConstructor = "create")
 public class LoginResponse {
 
-    private String token;
+    String token;
 } 

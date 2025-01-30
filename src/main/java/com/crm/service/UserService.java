@@ -1,6 +1,8 @@
 package com.crm.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.crm.domain.User;
 import com.crm.persistence.entity.UserEntity;
@@ -42,14 +44,22 @@ public class UserService {
     @Transactional
     public User createUser(User user) {
 
-        if (userRepository.existsByUsername(user.getUsername())) throw new BusinessException("Username already exists: " + user.getUsername());
+        String username = user.getUsername();
 
-        if (userRepository.existsByEmail(user.getEmail())) throw new BusinessException("Email already exists: " + user.getEmail());
+        if (userRepository.existsByUsername(username)) {
+            throw new BusinessException("Username already exists: " + username);
+        }
+
+        String email = user.getEmail();
+
+        if (userRepository.existsByEmail(email)) {
+            throw new BusinessException("Email already exists: " + email);
+        }
 
         UserEntity userEntity = new UserEntity();
 
-        userEntity.setUsername(user.getUsername());
-        userEntity.setEmail(user.getEmail());
+        userEntity.setUsername(username);
+        userEntity.setEmail(email);
         userEntity.setAdmin(user.getIsAdmin());
         userEntity.setActive(true);
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -62,44 +72,82 @@ public class UserService {
     @Transactional
     public User updateUser(Long id, User userDetails) {
 
-        UserEntity userEntity = findById(id);
+        UserEntity userEntity = findByIdOrThrowException(id);
 
-        if (userDetails.getUsername() != null && !userDetails.getUsername().isEmpty()) {
-            if (!userDetails.getUsername().equals(userEntity.getUsername()) &&
-                    userRepository.existsByUsername(userDetails.getUsername())) {
-                throw new BusinessException("Username already exists: " + userDetails.getUsername());
-            } else {
-                userEntity.setUsername(userDetails.getUsername());
-            }
-        }
+        updateUserEntityUsername(userDetails.getUsername(), userEntity);
 
-        if (userDetails.getEmail() != null && !userDetails.getEmail().isEmpty()) {
-            if (!userDetails.getEmail().equals(userEntity.getEmail()) &&
-                    userRepository.existsByEmail(userDetails.getEmail())) {
-                throw new BusinessException("Email already exists: " + userDetails.getEmail());
-            } else {
-                userEntity.setEmail(userDetails.getEmail());
-            }
-        }
+        updateUserEntityEmail(userDetails.getEmail(), userEntity);
 
-        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-            userEntity.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        }
+        updateUserEntityPassword(userDetails.getPassword(), userEntity);
 
-        if (userDetails.getIsAdmin() != null) userEntity.setAdmin(userDetails.getIsAdmin());
+        updateUserEntityIsAdmin(userDetails.getIsAdmin(), userEntity);
 
         UserEntity updatedUserEntity = userRepository.save(userEntity);
         
         return userEntityToUserMapper.map(updatedUserEntity);
     }
 
+    private void updateUserEntityUsername(String username, UserEntity userEntity) {
+
+        if (isUsernameNewAndValid(username, userEntity.getUsername())) {
+            if (doesNewUsernameAlreadyExist(username)) {
+                throw new BusinessException("Username already exists: " + username);
+            } else {
+                userEntity.setUsername(username);
+            }
+        }
+    }
+
+    private boolean isUsernameNewAndValid(String newUsername, String oldUsername) {
+
+        return newUsername != null && !newUsername.isBlank() && !newUsername.equals(oldUsername);
+    }
+
+    private boolean doesNewUsernameAlreadyExist(String newUsername) {
+
+        return userRepository.existsByUsername(newUsername);
+    }
+
+    private void updateUserEntityEmail(String email, UserEntity userEntity) {
+
+        if (isEmailNewAndValid(email, userEntity.getEmail())) {
+            if (doesNewEmailAlreadyExist(email)) {
+                throw new BusinessException("Email already exists: " + email);
+            } else {
+                userEntity.setEmail(email);
+            }
+        }
+    }
+
+    private boolean isEmailNewAndValid(String newEmail, String oldEmail) {
+
+        return newEmail != null && !newEmail.isBlank() && !newEmail.equals(oldEmail);
+    }
+
+    private boolean doesNewEmailAlreadyExist(String newEmail) {
+
+        return userRepository.existsByEmail(newEmail);
+    }
+
+    private void updateUserEntityPassword(String newPassword, UserEntity userEntity) {
+
+        Optional.ofNullable(newPassword)
+                .filter(Predicate.not(String::isBlank))
+                .map(passwordEncoder::encode)
+                .ifPresent(userEntity::setPassword);
+    }
+
+    private void updateUserEntityIsAdmin(Boolean isAdmin, UserEntity userEntity) {
+
+        Optional.ofNullable(isAdmin).ifPresent(userEntity::setAdmin);
+    }
+
     @Transactional
     public void deleteUser(Long id) {
 
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        UserEntity userEntity = findByIdOrThrowException(id);
 
         if (!customerRepository.findByCreatedBy(userEntity).isEmpty() || !customerRepository.findByLastModifiedBy(userEntity).isEmpty()) {
-
             throw new BusinessException("User has customers associated with it; please delete these customers first.");
         }
 
@@ -109,14 +157,14 @@ public class UserService {
     @Transactional
     public User toggleAdminStatus(Long id) {
 
-        UserEntity userEntity = findById(id);
+        UserEntity userEntity = findByIdOrThrowException(id);
         userEntity.setAdmin(!userEntity.isAdmin());
         UserEntity userEntityUpdated = userRepository.save(userEntity);
 
         return userEntityToUserMapper.map(userEntityUpdated);
     }
 
-    private UserEntity findById(Long id) {
+    private UserEntity findByIdOrThrowException(Long id) {
 
         return userRepository
                 .findById(id)

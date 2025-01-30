@@ -1,9 +1,11 @@
 package com.crm.domain;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
+@Getter
+@EqualsAndHashCode
 @Builder
 public class User {
 

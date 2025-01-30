@@ -15,8 +15,8 @@ public class CustomerToCustomerResponseMapper implements Mapper<Customer, Custom
                 .id(customer.getId())
                 .name(customer.getName())
                 .surname(customer.getSurname())
-                .createdById(customer.getCreatedById())
-                .lastModifiedById(customer.getLastModifiedById())
+                .createdByUserId(customer.getCreatedByUserId())
+                .lastModifiedByUserId(customer.getLastModifiedByUserId())
                 .build();
     }
 }

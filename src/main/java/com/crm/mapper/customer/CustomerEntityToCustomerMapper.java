@@ -23,8 +23,8 @@ public class CustomerEntityToCustomerMapper implements Mapper<CustomerEntity, Cu
                 .id(customerEntity.getId())
                 .name(customerEntity.getName())
                 .surname(customerEntity.getSurname())
-                .createdById(getCreatedById(customerEntity))
-                .lastModifiedById(getLastModifiedById(customerEntity))
+                .createdByUserId(getCreatedById(customerEntity))
+                .lastModifiedByUserId(getLastModifiedById(customerEntity))
                 .build();
     }
 
