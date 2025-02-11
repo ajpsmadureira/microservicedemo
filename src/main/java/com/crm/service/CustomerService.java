@@ -38,7 +38,7 @@ public class CustomerService {
                 .toList();
     }
 
-    public Customer getCustomerById(Long id) {
+    public Customer getCustomerById(Integer id) {
 
         return customerRepository.findById(id)
                 .map(customerEntityToCustomerMapper::map)
@@ -70,7 +70,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer updateCustomerDetails(Long id, Customer customer, User currentUser) {
+    public Customer updateCustomerDetails(Integer id, Customer customer, User currentUser) {
 
         try {
 
@@ -95,7 +95,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void updateCustomerPhoto(Long id, MultipartFile photo, User currentUser) {
+    public void updateCustomerPhoto(Integer id, MultipartFile photo, User currentUser) {
 
         String oldPhotoUrl = null;
         CustomerEntity customerEntity = null;
@@ -135,7 +135,7 @@ public class CustomerService {
         }
     }
 
-    public Path getCustomerPhotoPath(Long id) {
+    public Path getCustomerPhotoPath(Integer id) {
 
         return customerRepository.findById(id)
                 .map(CustomerEntity::getPhotoUrl)
@@ -144,7 +144,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void deleteCustomer(Long id) {
+    public void deleteCustomer(Integer id) {
 
         try {
 
@@ -160,12 +160,12 @@ public class CustomerService {
         }
     }
 
-    private UserEntity findUserByIdOrThrowException(Long id) {
+    private UserEntity findUserByIdOrThrowException(Integer id) {
 
         return userRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find user with id: " + id));
     }
 
-    private CustomerEntity findCustomerByIdOrThrowException(Long id) {
+    private CustomerEntity findCustomerByIdOrThrowException(Integer id) {
 
         return customerRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find customer with id: " + id));
     }

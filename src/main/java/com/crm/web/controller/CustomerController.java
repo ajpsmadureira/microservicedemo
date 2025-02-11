@@ -84,7 +84,7 @@ public class CustomerController {
             )
     })
     @GetMapping("/{id}")
-    public CustomerResponse getCustomerById(@Parameter(description = "Customer ID", required = true) @PathVariable Long id) {
+    public CustomerResponse getCustomerById(@Parameter(description = "Customer ID", required = true) @PathVariable Integer id) {
 
         return Optional.of(id)
                 .map(customerService::getCustomerById)
@@ -132,7 +132,7 @@ public class CustomerController {
     })
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public CustomerResponse updateCustomer(
-            @Parameter(description = "Customer ID", required = true) @PathVariable Long id,
+            @Parameter(description = "Customer ID", required = true) @PathVariable Integer id,
             @Parameter(description = "Updated customer details", required = true) @RequestBody CustomerUpdateRequest customerUpdateRequest
     ) {
 
@@ -149,7 +149,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@Parameter(description = "Customer ID", required = true) @PathVariable Long id) {
+    public void deleteCustomer(@Parameter(description = "Customer ID", required = true) @PathVariable Integer id) {
 
         customerService.deleteCustomer(id);
     }
@@ -161,7 +161,7 @@ public class CustomerController {
     })
     @PostMapping(path = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void updateCustomerPhoto(
-            @Parameter(description = "Customer ID", required = true) @PathVariable Long id,
+            @Parameter(description = "Customer ID", required = true) @PathVariable Integer id,
             @RequestParam("file") MultipartFile file
     ) {
 
@@ -174,7 +174,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @GetMapping(path = "/{id}/photo")
-    public ResponseEntity<Resource> getCustomerPhoto(@Parameter(description = "Customer ID", required = true) @PathVariable Long id) throws IOException {
+    public ResponseEntity<Resource> getCustomerPhoto(@Parameter(description = "Customer ID", required = true) @PathVariable Integer id) throws IOException {
 
         Path photoPath = customerService.getCustomerPhotoPath(id);
 

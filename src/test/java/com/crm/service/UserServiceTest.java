@@ -77,10 +77,10 @@ class UserServiceTest {
     @Test
     void getUserById_WhenUserExists_ShouldReturnUser() {
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUserEntity));
+        when(userRepository.findById(1)).thenReturn(Optional.of(testUserEntity));
         when(userEntityToUserMapper.map(any())).thenReturn(testUser);
         
-        var result = userService.getUserById(1L);
+        var result = userService.getUserById(1);
         
         assertNotNull(result);
         assertEquals(testUser.getUsername(), result.getUsername());
@@ -89,9 +89,9 @@ class UserServiceTest {
     @Test
     void getUserById_WhenUserDoesNotExist_ShouldThrowException() {
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
         
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1L));
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1));
     }
 
     @Test
@@ -131,18 +131,18 @@ class UserServiceTest {
     void updateUser_WhenUserExists_ShouldUpdateUser() {
 
         UserEntity existingUserEntity = TestDataFactory.createTestUserEntity();
-        existingUserEntity.setId(1L);
+        existingUserEntity.setId(1);
 
         User updatedUser = TestDataFactory.createTestUser();
         ReflectionTestUtils.setField(updatedUser, "username", "newusername");
         ReflectionTestUtils.setField(updatedUser, "email", "newemail@example.com");
         
-        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserEntity));
+        when(userRepository.findById(1)).thenReturn(Optional.of(existingUserEntity));
         when(userRepository.existsByUsername(any())).thenReturn(false);
         when(userRepository.existsByEmail(any())).thenReturn(false);
         when(userEntityToUserMapper.map(any())).thenReturn(updatedUser);
         
-        var result = userService.updateUser(1L, updatedUser);
+        var result = userService.updateUser(1, updatedUser);
         
         assertNotNull(result);
         assertEquals(updatedUser.getUsername(), result.getUsername());
@@ -152,20 +152,20 @@ class UserServiceTest {
     @Test
     void deleteUser_WhenUserExistsAndAssociatedCustomersDoNotExist_ShouldDeleteUser() {
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUserEntity));
+        when(userRepository.findById(1)).thenReturn(Optional.of(testUserEntity));
         when(customerRepository.findByCreatedBy(any())).thenReturn(List.of());
         when(customerRepository.findByLastModifiedBy(any())).thenReturn(List.of());
 
-        assertDoesNotThrow(() -> userService.deleteUser(1L));
-        verify(userRepository).deleteById(1L);
+        assertDoesNotThrow(() -> userService.deleteUser(1));
+        verify(userRepository).deleteById(1);
     }
 
     @Test
     void deleteUser_WhenUserDoesNotExist_ShouldThrowException() {
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
         
-        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1));
     }
 
     @Test
@@ -173,12 +173,12 @@ class UserServiceTest {
 
         UserEntity userEntity = TestDataFactory.createTestUserEntity();
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(1)).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any())).thenAnswer(invocation -> {
             assertTrue(((UserEntity) invocation.getArgument(0)).isAdmin());
             return invocation.getArgument(0);
         });
         
-        userService.toggleAdminStatus(1L);
+        userService.toggleAdminStatus(1);
     }
 } 

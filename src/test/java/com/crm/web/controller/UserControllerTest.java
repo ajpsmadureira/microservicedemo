@@ -72,7 +72,7 @@ class UserControllerTest {
     @WithMockUser(roles = "ADMIN")
     void getUserById_WhenUserExists_ShouldReturnUser() throws Exception {
 
-        when(userService.getUserById(1L)).thenReturn(testUser);
+        when(userService.getUserById(1)).thenReturn(testUser);
 
         mockMvc.perform(get("/api/admin/users/1"))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ class UserControllerTest {
     @WithMockUser(roles = "ADMIN")
     void updateUser_WithValidData_ShouldUpdateUser() throws Exception {
 
-        when(userService.updateUser(any(Long.class), any(User.class))).thenReturn(testUser);
+        when(userService.updateUser(any(Integer.class), any(User.class))).thenReturn(testUser);
 
         mockMvc.perform(put("/api/admin/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ class UserControllerTest {
     void toggleAdminStatus_ShouldToggleStatus() throws Exception {
 
         User adminUser = TestDataFactory.createTestAdmin();
-        when(userService.toggleAdminStatus(1L)).thenReturn(adminUser);
+        when(userService.toggleAdminStatus(1)).thenReturn(adminUser);
 
         mockMvc.perform(put("/api/admin/users/1/toggle-admin"))
                 .andExpect(status().isOk())

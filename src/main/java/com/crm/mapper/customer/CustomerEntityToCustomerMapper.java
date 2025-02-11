@@ -28,7 +28,7 @@ public class CustomerEntityToCustomerMapper implements Mapper<CustomerEntity, Cu
                 .build();
     }
 
-    private Long getCreatedById(CustomerEntity customerEntity) {
+    private Integer getCreatedById(CustomerEntity customerEntity) {
 
         return Optional.ofNullable(customerEntity)
                 .map(CustomerEntity::getCreatedBy)
@@ -37,7 +37,7 @@ public class CustomerEntityToCustomerMapper implements Mapper<CustomerEntity, Cu
                 .orElse(null);
     }
 
-    private Long getLastModifiedById(CustomerEntity customerEntity) {
+    private Integer getLastModifiedById(CustomerEntity customerEntity) {
 
         return Optional.ofNullable(customerEntity)
                 .map(CustomerEntity::getLastModifiedBy)

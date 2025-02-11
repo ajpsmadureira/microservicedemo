@@ -77,7 +77,7 @@ class CustomerControllerTest {
     @WithMockUser
     void getCustomerById_WhenCustomerExists_ShouldReturnCustomer() throws Exception {
 
-        when(customerService.getCustomerById(1L)).thenReturn(testCustomer);
+        when(customerService.getCustomerById(1)).thenReturn(testCustomer);
 
         mockMvc.perform(get("/api/customers/1"))
                 .andExpect(status().isOk())
@@ -116,7 +116,7 @@ class CustomerControllerTest {
     void updateCustomer_WithValidData_ShouldUpdateCustomer() throws Exception {
 
         when(authService.getCurrentUser()).thenReturn(testUser);
-        when(customerService.updateCustomerDetails(eq(1L), any(Customer.class), any(User.class)))
+        when(customerService.updateCustomerDetails(eq(1), any(Customer.class), any(User.class)))
                 .thenReturn(testCustomer);
 
         mockMvc.perform(put("/api/customers/1")

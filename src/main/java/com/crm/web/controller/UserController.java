@@ -77,7 +77,7 @@ public class UserController {
             )
     })
     @GetMapping("/{id}")
-    public UserResponse getUserById(@Parameter(description = "User ID", required = true) @PathVariable Long id) {
+    public UserResponse getUserById(@Parameter(description = "User ID", required = true) @PathVariable Integer id) {
 
         return Optional.of(id)
                 .map(userService::getUserById)
@@ -128,7 +128,7 @@ public class UserController {
     })
     @PutMapping("/{id}")
     public UserResponse updateUser(
-            @Parameter(description = "User ID", required = true) @PathVariable Long id,
+            @Parameter(description = "User ID", required = true) @PathVariable Integer id,
             @Parameter(description = "Updated user details", required = true) @Valid @RequestBody UserUpdateRequest userUpdateRequest
     ) {
 
@@ -149,7 +149,7 @@ public class UserController {
             )
     })
     @DeleteMapping("/{id}")
-    public void deleteUser(@Parameter(description = "User ID", required = true) @PathVariable Long id) {
+    public void deleteUser(@Parameter(description = "User ID", required = true) @PathVariable Integer id) {
 
         userService.deleteUser(id);
     }
@@ -168,7 +168,7 @@ public class UserController {
             )
     })
     @PutMapping("/{id}/toggle-admin")
-    public UserResponse toggleAdminStatus(@Parameter(description = "User ID", required = true) @PathVariable Long id) {
+    public UserResponse toggleAdminStatus(@Parameter(description = "User ID", required = true) @PathVariable Integer id) {
 
         return Optional.of(id)
                 .map(userService::toggleAdminStatus)

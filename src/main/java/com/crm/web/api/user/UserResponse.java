@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class UserResponse {
 
-    private final Long id;
+    private final Integer id;
     private final String username;
     private final String email;
     private final Boolean isAdmin;

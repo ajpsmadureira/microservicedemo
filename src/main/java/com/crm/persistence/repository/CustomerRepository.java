@@ -9,7 +9,7 @@ import com.crm.persistence.entity.CustomerEntity;
 import java.util.List;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
+public interface CustomerRepository extends JpaRepository<CustomerEntity, Integer> {
 
     List<CustomerEntity> findByCreatedBy(UserEntity userEntity);
     List<CustomerEntity> findByLastModifiedBy(UserEntity userEntity);

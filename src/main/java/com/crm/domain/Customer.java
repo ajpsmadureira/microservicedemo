@@ -9,9 +9,9 @@ import lombok.Getter;
 @Builder(toBuilder = true)
 public class Customer {
 
-    private final Long id;
+    private final Integer id;
     private final String name;
     private final String surname;
-    private final Long createdByUserId;
-    private final Long lastModifiedByUserId;
+    private final Integer createdByUserId;
+    private final Integer lastModifiedByUserId;
 }

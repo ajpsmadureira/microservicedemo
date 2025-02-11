@@ -34,7 +34,7 @@ public class UserService {
                 .toList();
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(Integer id) {
 
         return userRepository.findById(id)
                 .map(userEntityToUserMapper::map)
@@ -70,7 +70,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, User userDetails) {
+    public User updateUser(Integer id, User userDetails) {
 
         UserEntity userEntity = findByIdOrThrowException(id);
 
@@ -143,7 +143,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(Integer id) {
 
         UserEntity userEntity = findByIdOrThrowException(id);
 
@@ -155,7 +155,7 @@ public class UserService {
     }
 
     @Transactional
-    public User toggleAdminStatus(Long id) {
+    public User toggleAdminStatus(Integer id) {
 
         UserEntity userEntity = findByIdOrThrowException(id);
         userEntity.setAdmin(!userEntity.isAdmin());
@@ -164,7 +164,7 @@ public class UserService {
         return userEntityToUserMapper.map(userEntityUpdated);
     }
 
-    private UserEntity findByIdOrThrowException(Long id) {
+    private UserEntity findByIdOrThrowException(Integer id) {
 
         return userRepository
                 .findById(id)

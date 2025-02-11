@@ -19,6 +19,7 @@ A REST API for managing customerEntity data in a small shop, built with Spring B
 - Spring Security with JWT
 - Spring Data JPA
 - PostgreSQL
+- Flyway
 - OpenAPI/Swagger
 - Docker & Docker Compose
 - Maven
@@ -29,6 +30,7 @@ A REST API for managing customerEntity data in a small shop, built with Spring B
 - Maven 3.6+
 - Docker and Docker Compose (for containerized deployment)
 - PostgreSQL (if running locally)
+- Flyway 11.3.1
 
 ## Quick Start
 
@@ -55,6 +57,11 @@ Swagger UI will be available at `http://localhost:8080/api/swagger-ui.html`
    createdb crm_db
    ```
 
+1. Configure PostgreSQL:
+   ```bash
+   flyway -configFiles=db/conf/flyway.dev.conf baseline migrate
+   ```
+   
 2. Update application-dev.yml with your database credentials if different from defaults.
 
 3. Build and run:
