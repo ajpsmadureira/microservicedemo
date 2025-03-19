@@ -143,7 +143,7 @@ public class LotController {
                 .orElseThrow(ControllerException::new);
     }
 
-    @Operation(summary = "Delete lot", description = "Delete a lot and their associated photo")
+    @Operation(summary = "Delete lot", description = "Delete a lot and its associated photo")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Lot successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Lot not found")
