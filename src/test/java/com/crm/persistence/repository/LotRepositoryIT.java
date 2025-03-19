@@ -1,5 +1,6 @@
 package com.crm.persistence.repository;
 
+import com.crm.domain.LotState;
 import com.crm.persistence.entity.LotEntity;
 import com.crm.persistence.entity.UserEntity;
 import com.crm.util.TestDataFactory;
@@ -30,13 +31,16 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
 
         LotEntity lotSaved = lotRepository.save(lot);
 
+        entityManager.clear();
+
         LotEntity lotRetrieved = lotRepository.findById(lotSaved.getId()).orElseThrow();
 
-        assertEquals(lotRetrieved.getName(), lotSaved.getName());
-        assertEquals(lotRetrieved.getSurname(), lotSaved.getSurname());
-        assertEquals(lotRetrieved.getPhotoUrl(), lotSaved.getPhotoUrl());
-        assertEquals(lotRetrieved.getCreatedBy(), lot.getCreatedBy());
-        assertEquals(lotRetrieved.getLastModifiedBy(), lot.getLastModifiedBy());
+        assertEquals(lotSaved.getName(), lotRetrieved.getName());
+        assertEquals(lotSaved.getSurname(), lotRetrieved.getSurname());
+        assertEquals(lotSaved.getPhotoUrl(), lotRetrieved.getPhotoUrl());
+        assertEquals(LotState.CREATED, lotRetrieved.getState());
+        assertEquals(lot.getCreatedBy(), lotRetrieved.getCreatedBy());
+        assertEquals(lot.getLastModifiedBy(), lotRetrieved.getLastModifiedBy());
         assertNotNull(lotRetrieved.getCreatedAt());
         assertNotNull(lotRetrieved.getUpdatedAt());
     }

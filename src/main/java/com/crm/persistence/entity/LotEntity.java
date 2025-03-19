@@ -2,14 +2,17 @@ package com.crm.persistence.entity;
 
 import java.time.Instant;
 
+import com.crm.domain.LotState;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Table(name = "lots")
 @Data
 @NoArgsConstructor
+@DynamicInsert
 public class LotEntity {
 
     @Id
@@ -24,6 +27,9 @@ public class LotEntity {
 
     @Column(name = "photo_url")
     private String photoUrl;
+
+    @Enumerated(EnumType.STRING)
+    private LotState state;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
