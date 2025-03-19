@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import com.crm.domain.User;
 import com.crm.persistence.entity.UserEntity;
 import com.crm.mapper.user.UserEntityToUserMapper;
-import com.crm.persistence.repository.CustomerRepository;
+import com.crm.persistence.repository.LotRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CustomerRepository customerRepository;
+    private final LotRepository lotRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserEntityToUserMapper userEntityToUserMapper;
 
@@ -147,8 +147,8 @@ public class UserService {
 
         UserEntity userEntity = findByIdOrThrowException(id);
 
-        if (!customerRepository.findByCreatedBy(userEntity).isEmpty() || !customerRepository.findByLastModifiedBy(userEntity).isEmpty()) {
-            throw new BusinessException("User has customers associated with it; please delete these customers first.");
+        if (!lotRepository.findByCreatedBy(userEntity).isEmpty() || !lotRepository.findByLastModifiedBy(userEntity).isEmpty()) {
+            throw new BusinessException("User has lots associated with it; please delete these lots first.");
         }
 
         userRepository.deleteById(id);

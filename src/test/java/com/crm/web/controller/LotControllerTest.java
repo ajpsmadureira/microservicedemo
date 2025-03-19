@@ -6,30 +6,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.crm.domain.Customer;
+import com.crm.domain.Lot;
 import com.crm.domain.User;
 import com.crm.service.AuthService;
-import com.crm.service.CustomerService;
+import com.crm.service.LotService;
 import com.crm.util.TestDataFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import com.crm.config.TestConfig;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
-@WebMvcTest(CustomerController.class)
+@WebMvcTest(LotController.class)
 @Import(TestConfig.class)
-class CustomerControllerTest {
+class LotControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,13 +37,13 @@ class CustomerControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private CustomerService customerService;
+    @MockitoBean
+    private LotService lotService;
 
-    @MockBean
+    @MockitoBean
     private AuthService authService;
 
-    private Customer testCustomer;
+    private Lot testLot;
     private User testUser;
 
     @BeforeEach
@@ -51,61 +51,61 @@ class CustomerControllerTest {
 
         testUser = TestDataFactory.createTestUser();
         
-        testCustomer = TestDataFactory.createTestCustomer(testUser);
+        testLot = TestDataFactory.createTestLot(testUser);
     }
 
     @Test
     @WithMockUser
-    void getAllCustomers_ShouldReturnCustomers() throws Exception {
+    void getAllLots_ShouldReturnLots() throws Exception {
 
-        when(customerService.getAllCustomers()).thenReturn(Collections.singletonList(testCustomer));
+        when(lotService.getAllLots()).thenReturn(Collections.singletonList(testLot));
 
-        mockMvc.perform(get("/api/customers"))
+        mockMvc.perform(get("/api/lots"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value(testCustomer.getName()))
-                .andExpect(jsonPath("$[0].surname").value(testCustomer.getSurname()));
+                .andExpect(jsonPath("$[0].name").value(testLot.getName()))
+                .andExpect(jsonPath("$[0].surname").value(testLot.getSurname()));
     }
 
     @Test
-    void getAllCustomers_WhenNotAuthenticated_ShouldReturnUnauthorized() throws Exception {
+    void getAllLots_WhenNotAuthenticated_ShouldReturnUnauthorized() throws Exception {
 
-        mockMvc.perform(get("/api/customers"))
+        mockMvc.perform(get("/api/lots"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    void getCustomerById_WhenCustomerExists_ShouldReturnCustomer() throws Exception {
+    void getLotById_WhenLotExists_ShouldReturnLot() throws Exception {
 
-        when(customerService.getCustomerById(1)).thenReturn(testCustomer);
+        when(lotService.getLotById(1)).thenReturn(testLot);
 
-        mockMvc.perform(get("/api/customers/1"))
+        mockMvc.perform(get("/api/lots/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(testCustomer.getName()))
-                .andExpect(jsonPath("$.surname").value(testCustomer.getSurname()));
+                .andExpect(jsonPath("$.name").value(testLot.getName()))
+                .andExpect(jsonPath("$.surname").value(testLot.getSurname()));
     }
 
     @Test
     @WithMockUser
-    void createCustomer_WithValidData_ShouldCreateCustomer() throws Exception {
+    void createLot_WithValidData_ShouldCreateLot() throws Exception {
 
         when(authService.getCurrentUser()).thenReturn(testUser);
-        when(customerService.createCustomer(any(Customer.class), any(User.class)))
-                .thenReturn(testCustomer);
+        when(lotService.createLot(any(Lot.class), any(User.class)))
+                .thenReturn(testLot);
 
-        mockMvc.perform(post("/api/customers")
+        mockMvc.perform(post("/api/lots")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testCustomer)))
+                .content(objectMapper.writeValueAsString(testLot)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(testCustomer.getName()))
-                .andExpect(jsonPath("$.surname").value(testCustomer.getSurname()));
+                .andExpect(jsonPath("$.name").value(testLot.getName()))
+                .andExpect(jsonPath("$.surname").value(testLot.getSurname()));
     }
 
     @Test
     @WithMockUser
-    void createCustomer_WithInvalidData_ShouldReturnBadRequest() throws Exception {
+    void createLot_WithInvalidData_ShouldReturnBadRequest() throws Exception {
 
-        mockMvc.perform(post("/api/customers")
+        mockMvc.perform(post("/api/lots")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
@@ -113,23 +113,23 @@ class CustomerControllerTest {
 
     @Test
     @WithMockUser
-    void updateCustomer_WithValidData_ShouldUpdateCustomer() throws Exception {
+    void updateLot_WithValidData_ShouldUpdateLot() throws Exception {
 
         when(authService.getCurrentUser()).thenReturn(testUser);
-        when(customerService.updateCustomerDetails(eq(1), any(Customer.class), any(User.class)))
-                .thenReturn(testCustomer);
+        when(lotService.updateLotDetails(eq(1), any(Lot.class), any(User.class)))
+                .thenReturn(testLot);
 
-        mockMvc.perform(put("/api/customers/1")
+        mockMvc.perform(put("/api/lots/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testCustomer)))
+                        .content(objectMapper.writeValueAsString(testLot)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(testCustomer.getName()))
-                .andExpect(jsonPath("$.surname").value(testCustomer.getSurname()));
+                .andExpect(jsonPath("$.name").value(testLot.getName()))
+                .andExpect(jsonPath("$.surname").value(testLot.getSurname()));
     }
 
     @Test
     @WithMockUser
-    void updateCustomerPhoto_WithValidData_ShouldUpdateCustomerPhoto() throws Exception {
+    void updateLotPhoto_WithValidData_ShouldUpdateLotPhoto() throws Exception {
 
         MockMultipartFile photoFile = new MockMultipartFile(
                 "file",
@@ -140,15 +140,15 @@ class CustomerControllerTest {
 
         when(authService.getCurrentUser()).thenReturn(testUser);
 
-        mockMvc.perform(multipart("/api/customers/1/photo")
+        mockMvc.perform(multipart("/api/lots/1/photo")
                         .file(photoFile))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser
-    void deleteCustomer_ShouldDeleteCustomer() throws Exception {
-        mockMvc.perform(delete("/api/customers/1"))
+    void deleteLot_ShouldDeleteLot() throws Exception {
+        mockMvc.perform(delete("/api/lots/1"))
                 .andExpect(status().isOk());
     }
 } 

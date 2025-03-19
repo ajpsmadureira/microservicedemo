@@ -1,6 +1,6 @@
 # CRM Service
 
-A REST API for managing customerEntity data in a small shop, built with Spring Boot.
+A REST API for managing lot data in a small shop, built with Spring Boot.
 
 ## Features
 
@@ -52,12 +52,12 @@ Swagger UI will be available at `http://localhost:8080/api/swagger-ui.html`
 
 ### Local Development
 
-1. Configure PostgreSQL:
+1. Create the database:
    ```bash
    createdb crm_db
    ```
 
-1. Configure PostgreSQL:
+1. Initialize the database:
    ```bash
    flyway -configFiles=db/conf/flyway.dev.conf baseline migrate
    ```
@@ -81,7 +81,7 @@ On first startup, the application automatically creates a default admin userEnti
 You can use these credentials to:
 1. Access the API
 2. Create additional users
-3. Manage customer data
+3. Manage lot data
 
 For security reasons, it's recommended to:
 1. Change the default admin password after first login
@@ -108,12 +108,12 @@ The API documentation is available through Swagger UI when running in developmen
 
 #### Customers
 - GET `/api/customers` - List all customers
-- GET `/api/customers/{id}` - Get customerEntity by ID
-- POST `/api/customers` - Create customerEntity
-- GET `/api/customers/{id}/photo` - Get customer photo by ID
-- POST `/api/customers/{id}/photo` - Set customer photo
-- PUT `/api/customers/{id}` - Update customerEntity
-- DELETE `/api/customers/{id}` - Delete customerEntity
+- GET `/api/customers/{id}` - Get lotEntity by ID
+- POST `/api/customers` - Create lotEntity
+- GET `/api/customers/{id}/photo` - Get lot photo by ID
+- POST `/api/customers/{id}/photo` - Set lot photo
+- PUT `/api/customers/{id}` - Update lotEntity
+- DELETE `/api/customers/{id}` - Delete lotEntity
 
 ## Configuration
 

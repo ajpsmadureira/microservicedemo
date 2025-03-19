@@ -14,7 +14,7 @@ import com.crm.exception.BusinessException;
 import com.crm.exception.ResourceNotFoundException;
 import com.crm.mapper.user.UserEntityToUserMapper;
 import com.crm.persistence.entity.UserEntity;
-import com.crm.persistence.repository.CustomerRepository;
+import com.crm.persistence.repository.LotRepository;
 import com.crm.persistence.repository.UserRepository;
 import com.crm.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private CustomerRepository customerRepository;
+    private LotRepository lotRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -150,11 +150,11 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUser_WhenUserExistsAndAssociatedCustomersDoNotExist_ShouldDeleteUser() {
+    void deleteUser_WhenUserExistsAndAssociatedLotsDoNotExist_ShouldDeleteUser() {
 
         when(userRepository.findById(1)).thenReturn(Optional.of(testUserEntity));
-        when(customerRepository.findByCreatedBy(any())).thenReturn(List.of());
-        when(customerRepository.findByLastModifiedBy(any())).thenReturn(List.of());
+        when(lotRepository.findByCreatedBy(any())).thenReturn(List.of());
+        when(lotRepository.findByLastModifiedBy(any())).thenReturn(List.of());
 
         assertDoesNotThrow(() -> userService.deleteUser(1));
         verify(userRepository).deleteById(1);

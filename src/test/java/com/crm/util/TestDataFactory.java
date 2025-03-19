@@ -1,8 +1,8 @@
 package com.crm.util;
 
-import com.crm.domain.Customer;
+import com.crm.domain.Lot;
 import com.crm.domain.User;
-import com.crm.persistence.entity.CustomerEntity;
+import com.crm.persistence.entity.LotEntity;
 import com.crm.persistence.entity.UserEntity;
 
 import java.time.Instant;
@@ -17,10 +17,10 @@ public class TestDataFactory {
     private static final String ADMIN_USER_PASSWORD = "encodedPassword";
     private static final String ADMIN_USER_EMAIL = "admin@example.com";
 
-    private static final String CUSTOMER_USERNAME = "John";
-    private static final String CUSTOMER_SURNAME = "Doe";
-    private static final String CUSTOMER_PHOTO_URL = "file:photo.jpg";
-    private static final Instant CUSTOMER_TIMESTAMP = Instant.ofEpochMilli(1739278311);
+    private static final String LOT_USERNAME = "John";
+    private static final String LOT_SURNAME = "Doe";
+    private static final String LOT_PHOTO_URL = "file:photo.jpg";
+    private static final Instant LOT_TIMESTAMP = Instant.ofEpochMilli(1739278311);
     
     public static User createTestUser() {
 
@@ -58,30 +58,30 @@ public class TestDataFactory {
                 .build();
     }
 
-    public static Customer createTestCustomer(User createdBy) {
+    public static Lot createTestLot(User createdBy) {
 
-        return Customer.builder()
-                .name(CUSTOMER_USERNAME)
-                .surname(CUSTOMER_SURNAME)
+        return Lot.builder()
+                .name(LOT_USERNAME)
+                .surname(LOT_SURNAME)
                 .createdByUserId(createdBy.getId())
                 .lastModifiedByUserId(createdBy.getId())
                 .build();
     }
 
-    public static CustomerEntity createTestCustomerEntity() {
+    public static LotEntity createTestLotEntity() {
 
         UserEntity userEntity = createTestUserEntity();
 
-        CustomerEntity customerEntity = new CustomerEntity();
+        LotEntity lotEntity = new LotEntity();
 
-        customerEntity.setName(CUSTOMER_USERNAME);
-        customerEntity.setSurname(CUSTOMER_SURNAME);
-        customerEntity.setPhotoUrl(CUSTOMER_PHOTO_URL);
-        customerEntity.setCreatedBy(userEntity);
-        customerEntity.setLastModifiedBy(userEntity);
-        customerEntity.setCreatedAt(CUSTOMER_TIMESTAMP);
-        customerEntity.setUpdatedAt(CUSTOMER_TIMESTAMP);
+        lotEntity.setName(LOT_USERNAME);
+        lotEntity.setSurname(LOT_SURNAME);
+        lotEntity.setPhotoUrl(LOT_PHOTO_URL);
+        lotEntity.setCreatedBy(userEntity);
+        lotEntity.setLastModifiedBy(userEntity);
+        lotEntity.setCreatedAt(LOT_TIMESTAMP);
+        lotEntity.setUpdatedAt(LOT_TIMESTAMP);
 
-        return customerEntity;
+        return lotEntity;
     }
 } 

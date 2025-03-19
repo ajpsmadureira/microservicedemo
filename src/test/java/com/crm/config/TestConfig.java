@@ -1,13 +1,12 @@
 package com.crm.config;
 
-import com.crm.mapper.customer.CustomerCreateRequestToCustomerMapper;
-import com.crm.mapper.customer.CustomerToCustomerResponseMapper;
-import com.crm.mapper.customer.CustomerUpdateRequestToCustomerMapper;
+import com.crm.mapper.lot.LotCreateRequestToLotMapper;
+import com.crm.mapper.lot.LotToLotResponseMapper;
+import com.crm.mapper.lot.LotUpdateRequestToLotMapper;
 import com.crm.mapper.user.UserCreateRequestToUserMapper;
 import com.crm.mapper.user.UserToUserResponseMapper;
 import com.crm.mapper.user.UserUpdateRequestToUserMapper;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
@@ -16,19 +15,27 @@ import com.crm.security.CustomUserDetailsService;
 import com.crm.security.JwtAuthenticationFilter;
 import com.crm.security.JwtTokenProvider;
 
+import static org.mockito.Mockito.mock;
+
 @TestConfiguration
 @Import(SecurityConfig.class)
 public class TestConfig {
-    
-    @MockBean
-    private JwtTokenProvider jwtTokenProvider;
-    
-    @MockBean
-    private CustomUserDetailsService userDetailsService;
-    
+
+    @Bean
+    public JwtTokenProvider jwtTokenProvider() {
+
+        return mock(JwtTokenProvider.class);
+    }
+
+    @Bean
+    public CustomUserDetailsService userDetailsService() {
+
+        return mock(CustomUserDetailsService.class);
+    }
+
     @Bean
     @Primary
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
 
         return new JwtAuthenticationFilter(jwtTokenProvider);
     }
@@ -52,20 +59,20 @@ public class TestConfig {
     }
 
     @Bean
-    public CustomerCreateRequestToCustomerMapper customerCreateRequestToCustomerMapper() {
+    public LotCreateRequestToLotMapper lotCreateRequestToLotMapper() {
 
-        return new CustomerCreateRequestToCustomerMapper();
+        return new LotCreateRequestToLotMapper();
     }
 
     @Bean
-    public CustomerUpdateRequestToCustomerMapper customerUpdateRequestToCustomerMapper() {
+    public LotUpdateRequestToLotMapper lotUpdateRequestToLotMapper() {
 
-        return new CustomerUpdateRequestToCustomerMapper();
+        return new LotUpdateRequestToLotMapper();
     }
 
     @Bean
-    public CustomerToCustomerResponseMapper customerToCustomerResponseMapper() {
+    public LotToLotResponseMapper lotToLotResponseMapper() {
 
-        return new CustomerToCustomerResponseMapper();
+        return new LotToLotResponseMapper();
     }
 } 
