@@ -1,11 +1,11 @@
 # CRM Service
 
-A REST API for managing lot data in a small shop, built with Spring Boot.
+A REST API for managing auctions in an electronic marketplace, built with Spring Boot.
 
 ## Features
 
 - User Authentication and Authorization
-- Customer Management with Photo Upload
+- Lot Management with Photo Upload
 - Role-based Access Control (Admin/User)
 - API Documentation with OpenAPI/Swagger
 - Secure File Storage
@@ -72,7 +72,7 @@ Swagger UI will be available at `http://localhost:8080/api/swagger-ui.html`
 
 ## Default Admin User
 
-On first startup, the application automatically creates a default admin userEntity:
+On first startup, the application automatically creates a default admin user:
 
 - Username: `admin`
 - Password: `admin123`
@@ -96,24 +96,24 @@ The API documentation is available through Swagger UI when running in developmen
 ### Main Endpoints
 
 #### Authentication
-- POST `/api/auth/login` - Authenticate userEntity
+- POST `/api/auth/login` - Authenticate user
 
 #### Users (Admin only)
 - GET `/api/admin/users` - List all users
-- GET `/api/admin/users/{id}` - Get userEntity by ID
-- POST `/api/admin/users` - Create userEntity
-- PUT `/api/admin/users/{id}` - Update userEntity
-- DELETE `/api/admin/users/{id}` - Delete userEntity
+- GET `/api/admin/users/{id}` - Get user by ID
+- POST `/api/admin/users` - Create user
+- PUT `/api/admin/users/{id}` - Update user
+- DELETE `/api/admin/users/{id}` - Delete user
 - PUT `/api/admin/users/{id}/toggle-admin` - Toggle admin status
 
-#### Customers
-- GET `/api/customers` - List all customers
-- GET `/api/customers/{id}` - Get lotEntity by ID
-- POST `/api/customers` - Create lotEntity
-- GET `/api/customers/{id}/photo` - Get lot photo by ID
-- POST `/api/customers/{id}/photo` - Set lot photo
-- PUT `/api/customers/{id}` - Update lotEntity
-- DELETE `/api/customers/{id}` - Delete lotEntity
+#### Lots
+- GET `/api/lots` - List all lots
+- GET `/api/lots/{id}` - Get lot by ID
+- POST `/api/lots` - Create lot
+- GET `/api/lots/{id}/photo` - Get lot photo by ID
+- POST `/api/lots/{id}/photo` - Set lot photo
+- PUT `/api/lots/{id}` - Update lot
+- DELETE `/api/lots/{id}` - Delete lot
 
 ## Configuration
 
@@ -210,9 +210,11 @@ src/
     └── java/
         └── com/crm/
             ├── config/        # Test configuration
-            ├── web/           # Web layer tests
+            ├── functional/    # Functional tests
+            ├── persistence/   # Persistence tests
             ├── service/       # Service tests
-            └── util/          # Test utilities
+            ├── util/          # Test utilities
+            └── web/           # Web layer tests
 ```
 
 ## Authentication
@@ -264,14 +266,14 @@ curl -X GET http://localhost:8080/api/customers \
 
 ### Register (Optional)
 
-To create a new userEntity account:
+To create a new user account:
 
 ```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "new-userEntity",
+    "username": "new-user",
     "password": "password123",
-    "email": "userEntity@example.com"
+    "email": "user@example.com"
   }'
 ```
