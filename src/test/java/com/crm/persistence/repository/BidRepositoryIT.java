@@ -45,6 +45,7 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
         assertEquals(bid.getLot().getId(), bidRetrieved.getLot().getId());
         assertEquals(bid.getCreatedBy().getId(), bidRetrieved.getCreatedBy().getId());
         assertEquals(bid.getLastModifiedBy().getId(), bidRetrieved.getLastModifiedBy().getId());
+        assertNotNull(bidRetrieved.getUntil());
         assertNotNull(bidRetrieved.getCreatedAt());
         assertNotNull(bidRetrieved.getUpdatedAt());
     }
@@ -60,11 +61,31 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
+    public void shouldNotThrowExceptionIfUntilIsNull() {
+
+        BidEntity bid = getTestBidEntity();
+
+        bid.setUntil(null);
+
+        bidRepository.save(bid);
+    }
+
+    @Test
     public void shouldThrowDataIntegrityViolationExceptionIfLotIsNull() {
 
         BidEntity bid = getTestBidEntity();
 
         bid.setLot(null);
+
+        assertThrows(DataIntegrityViolationException.class, () -> bidRepository.save(bid));
+    }
+
+    @Test
+    public void shouldThrowDataIntegrityViolationExceptionIfStateIsNull() {
+
+        BidEntity bid = getTestBidEntity();
+
+        bid.setState(null);
 
         assertThrows(DataIntegrityViolationException.class, () -> bidRepository.save(bid));
     }

@@ -105,6 +105,7 @@ public class TestDataFactory {
 
         bidEntity.setAmount(BID_AMOUNT);
         bidEntity.setLot(lotEntity);
+        bidEntity.setUntil(BID_TIMESTAMP);
         bidEntity.setState(BidState.OPENED);
         bidEntity.setCreatedBy(userEntity);
         bidEntity.setLastModifiedBy(userEntity);

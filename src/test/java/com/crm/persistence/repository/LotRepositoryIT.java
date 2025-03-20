@@ -66,6 +66,16 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
+    public void shouldThrowDataIntegrityViolationExceptionIfStateIsNull() {
+
+        LotEntity lot = getTestLotEntity();
+
+        lot.setState(null);
+
+        assertThrows(DataIntegrityViolationException.class, () -> lotRepository.save(lot));
+    }
+
+    @Test
     public void shouldThrowDataIntegrityViolationExceptionIfCreatedByIsNull() {
 
         LotEntity lot = getTestLotEntity();

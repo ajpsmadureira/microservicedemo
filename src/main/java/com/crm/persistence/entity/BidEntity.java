@@ -21,6 +21,9 @@ public class BidEntity {
     @Column
     private BigDecimal amount;
 
+    @Column
+    private Instant until;
+
     @ManyToOne
     @JoinColumn(name = "lot")
     private LotEntity lot;
