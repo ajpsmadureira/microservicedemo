@@ -1,10 +1,14 @@
 package com.crm.util;
 
+import com.crm.domain.BidState;
 import com.crm.domain.Lot;
+import com.crm.domain.LotState;
 import com.crm.domain.User;
+import com.crm.persistence.entity.BidEntity;
 import com.crm.persistence.entity.LotEntity;
 import com.crm.persistence.entity.UserEntity;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public class TestDataFactory {
@@ -21,6 +25,9 @@ public class TestDataFactory {
     private static final String LOT_SURNAME = "Doe";
     private static final String LOT_PHOTO_URL = "file:photo.jpg";
     private static final Instant LOT_TIMESTAMP = Instant.ofEpochMilli(1739278311);
+
+    private static final BigDecimal BID_AMOUNT = BigDecimal.valueOf(100);
+    private static final Instant BID_TIMESTAMP = Instant.ofEpochMilli(1739278311);
     
     public static User createTestUser() {
 
@@ -77,11 +84,33 @@ public class TestDataFactory {
         lotEntity.setName(LOT_USERNAME);
         lotEntity.setSurname(LOT_SURNAME);
         lotEntity.setPhotoUrl(LOT_PHOTO_URL);
+        lotEntity.setState(LotState.CREATED);
         lotEntity.setCreatedBy(userEntity);
         lotEntity.setLastModifiedBy(userEntity);
         lotEntity.setCreatedAt(LOT_TIMESTAMP);
         lotEntity.setUpdatedAt(LOT_TIMESTAMP);
 
         return lotEntity;
+    }
+
+    public static BidEntity createTestBidEntity() {
+
+        UserEntity userEntity = createTestUserEntity();
+
+        LotEntity lotEntity = createTestLotEntity();
+        lotEntity.setCreatedBy(userEntity);
+        lotEntity.setLastModifiedBy(userEntity);
+
+        BidEntity bidEntity = new BidEntity();
+
+        bidEntity.setAmount(BID_AMOUNT);
+        bidEntity.setLot(lotEntity);
+        bidEntity.setState(BidState.OPENED);
+        bidEntity.setCreatedBy(userEntity);
+        bidEntity.setLastModifiedBy(userEntity);
+        bidEntity.setCreatedAt(BID_TIMESTAMP);
+        bidEntity.setUpdatedAt(BID_TIMESTAMP);
+
+        return bidEntity;
     }
 } 

@@ -20,26 +20,26 @@ CREATE TABLE lots
    name                 VARCHAR(200) NOT NULL,
    surname              VARCHAR(200) NOT NULL,
    photo_url            VARCHAR(200),
-   state                LOT_STATE DEFAULT 'CREATED',
-   created_by           SERIAL references users(id) NOT NULL,
-   last_modified_by     SERIAL references users(id) NOT NULL,
+   state                LOT_STATE NOT NULL,
+   created_by           SERIAL references users NOT NULL,
+   last_modified_by     SERIAL references users NOT NULL,
    created_at           TIMESTAMPTZ NOT NULL,
    updated_at           TIMESTAMPTZ NOT NULL
 );
 
-/*
 CREATE TYPE BID_STATE AS ENUM ('OPENED', 'CANCELLED', 'ACCEPTED', 'OUTDATED');
+
+CREATE CAST (character varying AS BID_STATE) with inout as assignment;
 
 CREATE TABLE bids
 (
    id                   SERIAL PRIMARY KEY,
    amount               DECIMAL NOT NULL,
-   lot                  SERIAL references lots(id) NOT NULL,
    state                BID_STATE NOT NULL,
    until                TIMESTAMPTZ,
-   created_by           SERIAL references users(id) NOT NULL,
-   last_modified_by     SERIAL references users(id) NOT NULL,
+   lot                  SERIAL references lots NOT NULL,
+   created_by           SERIAL references users NOT NULL,
+   last_modified_by     SERIAL references users NOT NULL,
    created_at           TIMESTAMPTZ NOT NULL,
    updated_at           TIMESTAMPTZ NOT NULL
 );
-*/

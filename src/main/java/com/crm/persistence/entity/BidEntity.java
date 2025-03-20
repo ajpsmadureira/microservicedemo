@@ -1,35 +1,32 @@
 package com.crm.persistence.entity;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.crm.domain.LotState;
+import com.crm.domain.BidState;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+
 @Entity
-@Table(name = "lots")
+@Table(name = "bids")
 @Data
 @NoArgsConstructor
-public class LotEntity {
+public class BidEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column
-    private String name;
+    private BigDecimal amount;
 
-    @Column
-    private String surname;
-
-    @Column(name = "photo_url")
-    private String photoUrl;
+    @ManyToOne
+    @JoinColumn(name = "lot")
+    private LotEntity lot;
 
     @Enumerated(EnumType.STRING)
-    private LotState state;
+    private BidState state;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
@@ -44,10 +41,6 @@ public class LotEntity {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
-    @OneToMany
-    @JoinColumn(name = "lot")
-    private List<BidEntity> bids = new ArrayList<>();
 
     @PrePersist
     protected void onPersist() {
