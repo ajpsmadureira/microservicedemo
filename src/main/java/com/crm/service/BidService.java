@@ -55,6 +55,19 @@ public class BidService {
         }
     }
 
+    @Transactional
+    public void deleteBid(Integer id) {
+
+        try {
+
+            bidRepository.deleteById(id);
+
+        } catch (Exception e) {
+
+            throw new BusinessException("Failed to delete bid: " + e.getMessage());
+        }
+    }
+
     private UserEntity findUserByIdOrThrowException(Integer id) {
 
         return userRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find user with id: " + id));

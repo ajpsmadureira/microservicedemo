@@ -1,6 +1,7 @@
 package com.crm.service;
 
 import com.crm.domain.*;
+import com.crm.exception.BusinessException;
 import com.crm.mapper.bid.BidEntityToBidMapper;
 import com.crm.persistence.entity.BidEntity;
 import com.crm.persistence.entity.LotEntity;
@@ -21,8 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BidServiceTest {
@@ -53,7 +53,6 @@ class BidServiceTest {
     private Bid testBid;
 
     private BidEntity testBidEntity;
-
 
     @BeforeEach
     void setUp() {
@@ -92,5 +91,48 @@ class BidServiceTest {
         verify(bidEntityToBidMapper).map(testBidEntity);
 
         assertEquals(testBid, result);
+    }
+
+    @Test
+    void createBid_WhenUserDoesNotExist_ShouldThrowException() {
+
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testLot, testUser));
+    }
+
+    @Test
+    void createBid_WhenLotDoesNotExist_ShouldThrowException() {
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
+        when(lotRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testLot, testUser));
+    }
+
+    @Test
+    void createBid_WhenLotIsNotAuctioned_ShouldThrowException() {
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
+        testLotEntity.setState(LotState.CREATED);
+        when(lotRepository.findById(any())).thenReturn(Optional.ofNullable(testLotEntity));
+
+        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testLot, testUser));
+    }
+
+    @Test
+    void deleteBid_noJpaException_ShouldNotThrowBusinessException() {
+
+        assertDoesNotThrow(() -> bidService.deleteBid(1));
+
+        verify(bidRepository).deleteById(1);
+    }
+
+    @Test
+    void deleteBid_withJpaException_ShouldThrowBusinessException() {
+
+        doThrow(new RuntimeException()).when(bidRepository).deleteById(1);
+
+        assertThrows(BusinessException.class, () -> bidService.deleteBid(1));
     }
 } 
