@@ -1,0 +1,19 @@
+package com.crm.web.api.bid;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+
+@Data
+public class BidCreateRequest {
+
+    @NotBlank(message = "Amount is required")
+    private BigDecimal amount;
+
+    @NotBlank(message = "Lot id is required")
+    private Integer lotId;
+
+    private final Instant until;
+} 

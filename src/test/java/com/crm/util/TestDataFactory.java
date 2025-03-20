@@ -54,6 +54,7 @@ public class TestDataFactory {
     public static User createTestAdmin() {
 
         return User.builder()
+                .id(1)
                 .username(ADMIN_USER_USERNAME)
                 .email(ADMIN_USER_EMAIL)
                 .password(ADMIN_USER_PASSWORD)
@@ -65,6 +66,7 @@ public class TestDataFactory {
     public static Lot createTestLot(User user) {
 
         return Lot.builder()
+                .id(1)
                 .name(LOT_USERNAME)
                 .surname(LOT_SURNAME)
                 .createdByUserId(user.getId())
@@ -91,6 +93,7 @@ public class TestDataFactory {
     public static Bid createTestBid(User user, Lot lot) {
 
         return Bid.builder()
+                .id(1)
                 .amount(BID_AMOUNT)
                 .until(BID_TIMESTAMP)
                 .state(BidState.OPENED)

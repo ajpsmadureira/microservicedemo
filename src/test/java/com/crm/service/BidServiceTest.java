@@ -46,7 +46,7 @@ class BidServiceTest {
 
     private UserEntity testUserEntity;
 
-    private Lot testLot;
+    //private Lot testLot;
 
     private LotEntity testLotEntity;
 
@@ -60,7 +60,7 @@ class BidServiceTest {
         testUser = TestDataFactory.createTestUser();
         testUserEntity = TestDataFactory.createTestUserEntity();
 
-        testLot = TestDataFactory.createTestLot(testUser);
+        Lot testLot = TestDataFactory.createTestLot(testUser);
         testLotEntity = TestDataFactory.createTestLotEntity(testUserEntity);
 
         testBid = TestDataFactory.createTestBid(testUser, testLot);
@@ -76,7 +76,7 @@ class BidServiceTest {
         when(bidRepository.save(any())).thenReturn(testBidEntity);
         when(bidEntityToBidMapper.map(any())).thenReturn(testBid);
 
-        var result = bidService.createBid(testBid, testLot, testUser);
+        var result = bidService.createBid(testBid, testUser);
 
         ArgumentCaptor<BidEntity> bidEntityCaptor = ArgumentCaptor.forClass(BidEntity.class);
         verify(bidRepository).save(bidEntityCaptor.capture());
@@ -98,7 +98,7 @@ class BidServiceTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testLot, testUser));
+        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testUser));
     }
 
     @Test
@@ -107,7 +107,7 @@ class BidServiceTest {
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
         when(lotRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testLot, testUser));
+        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testUser));
     }
 
     @Test
@@ -117,7 +117,7 @@ class BidServiceTest {
         testLotEntity.setState(LotState.CREATED);
         when(lotRepository.findById(any())).thenReturn(Optional.ofNullable(testLotEntity));
 
-        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testLot, testUser));
+        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testUser));
     }
 
     @Test

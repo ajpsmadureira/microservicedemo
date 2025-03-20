@@ -1,8 +1,6 @@
 package com.crm.config;
 
-import com.crm.mapper.lot.LotCreateRequestToLotMapper;
-import com.crm.mapper.lot.LotToLotResponseMapper;
-import com.crm.mapper.lot.LotUpdateRequestToLotMapper;
+import com.crm.mapper.lot.*;
 import com.crm.mapper.user.UserCreateRequestToUserMapper;
 import com.crm.mapper.user.UserToUserResponseMapper;
 import com.crm.mapper.user.UserUpdateRequestToUserMapper;
@@ -74,5 +72,17 @@ public class TestConfig {
     public LotToLotResponseMapper lotToLotResponseMapper() {
 
         return new LotToLotResponseMapper();
+    }
+
+    @Bean
+    public BidCreateRequestToBidMapper bidCreateRequestToBidMapper() {
+
+        return new BidCreateRequestToBidMapper();
+    }
+
+    @Bean
+    public BidToBidResponseMapper bidToBidResponseMapper() {
+
+        return new BidToBidResponseMapper();
     }
 } 

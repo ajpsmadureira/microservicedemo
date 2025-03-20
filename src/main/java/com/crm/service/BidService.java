@@ -23,13 +23,13 @@ public class BidService {
     private final BidEntityToBidMapper bidEntityToBidMapper;
 
     @Transactional
-    public Bid createBid(Bid bid, Lot lot, User currentUser) {
+    public Bid createBid(Bid bid, User currentUser) {
 
         try {
 
             UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
-            LotEntity lotEntity = findLotByIdOrThrowException(lot.getId());
+            LotEntity lotEntity = findLotByIdOrThrowException(bid.getLotId());
 
             if (lotEntity.getState() != LotState.AUCTIONED) {
 
