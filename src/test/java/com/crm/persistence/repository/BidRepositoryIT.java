@@ -155,7 +155,11 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
 
     private BidEntity getTestBidEntity() {
 
-        BidEntity bid = TestDataFactory.createTestBidEntity();
+        UserEntity userEntity = TestDataFactory.createTestUserEntity();
+
+        LotEntity lotEntity = TestDataFactory.createTestLotEntity(userEntity);
+
+        BidEntity bid = TestDataFactory.createTestBidEntity(userEntity, lotEntity);
 
         UserEntity user = bid.getCreatedBy();
         user.setId(null);

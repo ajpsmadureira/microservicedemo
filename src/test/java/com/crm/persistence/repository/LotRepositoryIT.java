@@ -140,7 +140,9 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
 
     private LotEntity getTestLotEntity() {
 
-        LotEntity lot = TestDataFactory.createTestLotEntity();
+        UserEntity userEntity = TestDataFactory.createTestUserEntity();
+
+        LotEntity lot = TestDataFactory.createTestLotEntity(userEntity);
 
         UserEntity user = lot.getCreatedBy();
         user.setId(null);

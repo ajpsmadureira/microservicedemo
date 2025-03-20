@@ -1,9 +1,6 @@
 package com.crm.util;
 
-import com.crm.domain.BidState;
-import com.crm.domain.Lot;
-import com.crm.domain.LotState;
-import com.crm.domain.User;
+import com.crm.domain.*;
 import com.crm.persistence.entity.BidEntity;
 import com.crm.persistence.entity.LotEntity;
 import com.crm.persistence.entity.UserEntity;
@@ -65,19 +62,17 @@ public class TestDataFactory {
                 .build();
     }
 
-    public static Lot createTestLot(User createdBy) {
+    public static Lot createTestLot(User user) {
 
         return Lot.builder()
                 .name(LOT_USERNAME)
                 .surname(LOT_SURNAME)
-                .createdByUserId(createdBy.getId())
-                .lastModifiedByUserId(createdBy.getId())
+                .createdByUserId(user.getId())
+                .lastModifiedByUserId(user.getId())
                 .build();
     }
 
-    public static LotEntity createTestLotEntity() {
-
-        UserEntity userEntity = createTestUserEntity();
+    public static LotEntity createTestLotEntity(UserEntity userEntity) {
 
         LotEntity lotEntity = new LotEntity();
 
@@ -93,13 +88,19 @@ public class TestDataFactory {
         return lotEntity;
     }
 
-    public static BidEntity createTestBidEntity() {
+    public static Bid createTestBid(User user, Lot lot) {
 
-        UserEntity userEntity = createTestUserEntity();
+        return Bid.builder()
+                .amount(BID_AMOUNT)
+                .until(BID_TIMESTAMP)
+                .state(BidState.OPENED)
+                .lotId(lot.getId())
+                .createdByUserId(user.getId())
+                .lastModifiedByUserId(user.getId())
+                .build();
+    }
 
-        LotEntity lotEntity = createTestLotEntity();
-        lotEntity.setCreatedBy(userEntity);
-        lotEntity.setLastModifiedBy(userEntity);
+    public static BidEntity createTestBidEntity(UserEntity userEntity, LotEntity lotEntity) {
 
         BidEntity bidEntity = new BidEntity();
 
