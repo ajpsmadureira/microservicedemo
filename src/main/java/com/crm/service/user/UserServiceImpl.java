@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.crm.domain.User;
+import com.crm.exception.InvalidParameterException;
 import com.crm.persistence.entity.UserEntity;
 import com.crm.mapper.user.UserEntityToUserMapper;
 import com.crm.persistence.repository.LotRepository;
@@ -47,26 +48,32 @@ public class UserServiceImpl implements UserService {
         String username = user.getUsername();
 
         if (userRepository.existsByUsername(username)) {
-            throw new BusinessException("Username already exists: " + username);
+            throw new InvalidParameterException("Username already exists: " + username);
         }
 
         String email = user.getEmail();
 
         if (userRepository.existsByEmail(email)) {
-            throw new BusinessException("Email already exists: " + email);
+            throw new InvalidParameterException("Email already exists: " + email);
         }
 
-        UserEntity userEntity = new UserEntity();
+        try {
+            UserEntity userEntity = new UserEntity();
 
-        userEntity.setUsername(username);
-        userEntity.setEmail(email);
-        userEntity.setAdmin(user.getIsAdmin());
-        userEntity.setActive(true);
-        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+            userEntity.setUsername(username);
+            userEntity.setEmail(email);
+            userEntity.setAdmin(user.getIsAdmin());
+            userEntity.setActive(true);
+            userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        UserEntity createdUserEntity = userRepository.save(userEntity);
+            UserEntity createdUserEntity = userRepository.save(userEntity);
 
-        return userEntityToUserMapper.map(createdUserEntity);
+            return userEntityToUserMapper.map(createdUserEntity);
+
+        } catch(Exception e) {
+
+            throw new BusinessException("Failed to create user: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -82,16 +89,23 @@ public class UserServiceImpl implements UserService {
 
         updateUserEntityIsAdmin(userDetails.getIsAdmin(), userEntity);
 
-        UserEntity updatedUserEntity = userRepository.save(userEntity);
-        
-        return userEntityToUserMapper.map(updatedUserEntity);
+        try {
+
+            UserEntity updatedUserEntity = userRepository.save(userEntity);
+
+            return userEntityToUserMapper.map(updatedUserEntity);
+
+        } catch(Exception e) {
+
+            throw new BusinessException("Failed to update user: " + e.getMessage());
+        }
     }
 
     private void updateUserEntityUsername(String username, UserEntity userEntity) {
 
         if (isUsernameNewAndValid(username, userEntity.getUsername())) {
             if (doesNewUsernameAlreadyExist(username)) {
-                throw new BusinessException("Username already exists: " + username);
+                throw new InvalidParameterException("Username already exists: " + username);
             } else {
                 userEntity.setUsername(username);
             }
@@ -112,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
         if (isEmailNewAndValid(email, userEntity.getEmail())) {
             if (doesNewEmailAlreadyExist(email)) {
-                throw new BusinessException("Email already exists: " + email);
+                throw new InvalidParameterException("Email already exists: " + email);
             } else {
                 userEntity.setEmail(email);
             }
@@ -148,7 +162,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = findByIdOrThrowException(id);
 
         if (!lotRepository.findByCreatedBy(userEntity).isEmpty() || !lotRepository.findByLastModifiedBy(userEntity).isEmpty()) {
-            throw new BusinessException("User has lots associated with it; please delete these lots first.");
+            throw new InvalidParameterException("User has lots associated with it; please delete these lots first.");
         }
 
         userRepository.deleteById(id);
@@ -158,10 +172,19 @@ public class UserServiceImpl implements UserService {
     public User toggleAdminStatus(Integer id) {
 
         UserEntity userEntity = findByIdOrThrowException(id);
-        userEntity.setAdmin(!userEntity.isAdmin());
-        UserEntity userEntityUpdated = userRepository.save(userEntity);
 
-        return userEntityToUserMapper.map(userEntityUpdated);
+        userEntity.setAdmin(!userEntity.isAdmin());
+
+        try {
+
+            UserEntity userEntityUpdated = userRepository.save(userEntity);
+
+            return userEntityToUserMapper.map(userEntityUpdated);
+
+        } catch (Exception e) {
+
+            throw new BusinessException("Failed to toggle admin status: " + e.getMessage());
+        }
     }
 
     private UserEntity findByIdOrThrowException(Integer id) {

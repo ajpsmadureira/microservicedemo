@@ -2,6 +2,8 @@ package com.crm.service.bid;
 
 import com.crm.domain.*;
 import com.crm.exception.BusinessException;
+import com.crm.exception.InvalidParameterException;
+import com.crm.exception.ResourceNotFoundException;
 import com.crm.mapper.bid.BidEntityToBidMapper;
 import com.crm.persistence.entity.BidEntity;
 import com.crm.persistence.entity.LotEntity;
@@ -27,25 +29,33 @@ public class BidServiceImpl implements BidService {
     @Transactional
     public Bid createBid(Bid bid, User currentUser) {
 
+        UserEntity currentUserEntity;
+
         try {
+            currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
-            UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
+        } catch(ResourceNotFoundException e) {
 
-            LotEntity lotEntity = findLotByIdOrThrowException(bid.getLotId());
+            throw new BusinessException("Failed to create bid: " + e.getMessage());
+        }
 
-            if (lotEntity.getState() != LotState.AUCTIONED) {
+        LotEntity lotEntity = findLotByIdOrThrowException(bid.getLotId());
 
-                throw new RuntimeException("Lot is not being auctioned: " + lotEntity.getId());
-            }
+        if (lotEntity.getState() != LotState.AUCTIONED) {
 
-            BidEntity bidEntity = new BidEntity();
+            throw new InvalidParameterException("Lot is not being auctioned: " + lotEntity.getId());
+        }
 
-            bidEntity.setUntil(bid.getUntil());
-            bidEntity.setAmount(bid.getAmount());
-            bidEntity.setLot(lotEntity);
-            bidEntity.setState(BidState.CREATED);
-            bidEntity.setCreatedBy(currentUserEntity);
-            bidEntity.setLastModifiedBy(currentUserEntity);
+        BidEntity bidEntity = new BidEntity();
+
+        bidEntity.setUntil(bid.getUntil());
+        bidEntity.setAmount(bid.getAmount());
+        bidEntity.setLot(lotEntity);
+        bidEntity.setState(BidState.CREATED);
+        bidEntity.setCreatedBy(currentUserEntity);
+        bidEntity.setLastModifiedBy(currentUserEntity);
+
+        try {
 
             BidEntity newBidEntitySaved = bidRepository.save(bidEntity);
 
@@ -60,14 +70,14 @@ public class BidServiceImpl implements BidService {
     @Transactional
     public void deleteBid(Integer id) {
 
+        BidEntity bidEntity = findByIdOrThrowException(id);
+
+        if (bidEntity.getState() == BidState.ACCEPTED) {
+
+            throw new InvalidParameterException("An accepted bid cannot be deleted: " + bidEntity.getId());
+        }
+
         try {
-
-            BidEntity bidEntity = findBidByIdOrThrowException(id);
-
-            if (bidEntity.getState() == BidState.ACCEPTED) {
-
-                throw new RuntimeException("An accepted bid cannot be deleted: " + bidEntity.getId());
-            }
 
             bidRepository.deleteById(id);
 
@@ -80,14 +90,14 @@ public class BidServiceImpl implements BidService {
     @Transactional
     public void cancelBid(Integer id) {
 
+        BidEntity bidEntity = findByIdOrThrowException(id);
+
+        if (bidEntity.getState() != BidState.CREATED) {
+
+            throw new InvalidParameterException("Only bids in created state can be cancelled. Bid state is " + bidEntity.getState());
+        }
+
         try {
-
-            BidEntity bidEntity = findBidByIdOrThrowException(id);
-
-            if (bidEntity.getState() != BidState.CREATED) {
-
-                throw new RuntimeException("Only bids in created state can be cancelled. Bid state is " + bidEntity.getState());
-            }
 
             bidEntity.setState(BidState.CANCELLED);
 
@@ -102,19 +112,19 @@ public class BidServiceImpl implements BidService {
     @Transactional
     public void acceptBid(Integer id) {
 
+        BidEntity bidEntity = findByIdOrThrowException(id);
+
+        if (bidEntity.getState() != BidState.CREATED) {
+
+            throw new InvalidParameterException("Only bids in created state can be accepted. Bid state is " + bidEntity.getState());
+        }
+
+        if (bidEntity.getUntil().isBefore(now())) {
+
+            throw new InvalidParameterException("Bid is outdated. Bid is until " + bidEntity.getUntil());
+        }
+
         try {
-
-            BidEntity bidEntity = findBidByIdOrThrowException(id);
-
-            if (bidEntity.getState() != BidState.CREATED) {
-
-                throw new RuntimeException("Only bids in created state can be accepted. Bid state is " + bidEntity.getState());
-            }
-
-            if (bidEntity.getUntil().isBefore(now())) {
-
-                throw new RuntimeException("Bid is outdated. Bid is until " + bidEntity.getUntil());
-            }
 
             bidEntity.setState(BidState.ACCEPTED);
 
@@ -128,16 +138,16 @@ public class BidServiceImpl implements BidService {
 
     private UserEntity findUserByIdOrThrowException(Integer id) {
 
-        return userRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find user with id: " + id));
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find user with id: " + id));
     }
 
     private LotEntity findLotByIdOrThrowException(Integer id) {
 
-        return lotRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find lot with id: " + id));
+        return lotRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find lot with id: " + id));
     }
 
-    private BidEntity findBidByIdOrThrowException(Integer id) {
+    private BidEntity findByIdOrThrowException(Integer id) {
 
-        return bidRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find bid with id: " + id));
+        return bidRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find bid with id: " + id));
     }
 } 

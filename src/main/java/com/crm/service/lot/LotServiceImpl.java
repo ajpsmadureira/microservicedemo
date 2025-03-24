@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.crm.domain.Lot;
 import com.crm.domain.User;
+import com.crm.exception.InvalidParameterException;
 import com.crm.persistence.entity.LotEntity;
 import com.crm.mapper.lot.LotEntityToLotMapper;
 import com.crm.persistence.repository.UserRepository;
@@ -49,16 +50,16 @@ public class LotServiceImpl implements LotService {
     @Transactional
     public Lot createLot(Lot lot, User currentUser) {
 
+        UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
+
+        LotEntity lotEntity = new LotEntity();
+
+        lotEntity.setName(lot.getName());
+        lotEntity.setSurname(lot.getSurname());
+        lotEntity.setCreatedBy(currentUserEntity);
+        lotEntity.setLastModifiedBy(currentUserEntity);
+
         try {
-
-            UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
-
-            LotEntity lotEntity = new LotEntity();
-
-            lotEntity.setName(lot.getName());
-            lotEntity.setSurname(lot.getSurname());
-            lotEntity.setCreatedBy(currentUserEntity);
-            lotEntity.setLastModifiedBy(currentUserEntity);
 
             LotEntity newLotEntitySaved = lotRepository.save(lotEntity);
             
@@ -73,17 +74,17 @@ public class LotServiceImpl implements LotService {
     @Transactional
     public Lot updateLotDetails(Integer id, Lot lot, User currentUser) {
 
+        LotEntity lotEntity = findLotByIdOrThrowException(id);
+
+        Optional.ofNullable(lot.getName()).ifPresent(lotEntity::setName);
+
+        Optional.ofNullable(lot.getSurname()).ifPresent(lotEntity::setSurname);
+
+        UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
+
+        lotEntity.setLastModifiedBy(currentUserEntity);
+
         try {
-
-            LotEntity lotEntity = findLotByIdOrThrowException(id);
-
-            Optional.ofNullable(lot.getName()).ifPresent(lotEntity::setName);
-
-            Optional.ofNullable(lot.getSurname()).ifPresent(lotEntity::setSurname);
-
-            UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
-
-            lotEntity.setLastModifiedBy(currentUserEntity);
             
             LotEntity updatedLotEntity = lotRepository.save(lotEntity);
 
@@ -99,11 +100,10 @@ public class LotServiceImpl implements LotService {
     public void updateLotPhoto(Integer id, MultipartFile photo, User currentUser) {
 
         String oldPhotoUrl = null;
-        LotEntity lotEntity = null;
+
+        LotEntity lotEntity = findLotByIdOrThrowException(id);
 
         try {
-
-            lotEntity = findLotByIdOrThrowException(id);
 
             oldPhotoUrl = lotEntity.getPhotoUrl();
 
@@ -147,9 +147,9 @@ public class LotServiceImpl implements LotService {
     @Transactional
     public void deleteLot(Integer id) {
 
-        try {
+        LotEntity lotEntity = findLotByIdOrThrowException(id);
 
-            LotEntity lotEntity = findLotByIdOrThrowException(id);
+        try {
 
             lotRepository.deleteById(id);
 
@@ -168,6 +168,6 @@ public class LotServiceImpl implements LotService {
 
     private LotEntity findLotByIdOrThrowException(Integer id) {
 
-        return lotRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find lot with id: " + id));
+        return lotRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find lot with id: " + id));
     }
 } 

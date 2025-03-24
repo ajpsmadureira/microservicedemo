@@ -1,7 +1,12 @@
-package com.crm.exception;
+package com.crm.web.controller;
 
 import java.util.stream.Collectors;
 
+import com.crm.exception.BusinessException;
+import com.crm.exception.ControllerException;
+import com.crm.exception.InvalidParameterException;
+import com.crm.exception.ResourceNotFoundException;
+import com.crm.web.api.error.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -24,6 +29,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidParameterException(InvalidParameterException ex) {
+        return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -81,7 +91,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
-        return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.crm.domain.User;
-import com.crm.exception.BusinessException;
+import com.crm.exception.InvalidParameterException;
 import com.crm.exception.ResourceNotFoundException;
 import com.crm.mapper.user.UserEntityToUserMapper;
 import com.crm.persistence.entity.UserEntity;
@@ -116,7 +116,7 @@ class UserServiceTest {
 
         when(userRepository.existsByUsername(any())).thenReturn(true);
         
-        assertThrows(BusinessException.class, () -> userService.createUser(testUser));
+        assertThrows(InvalidParameterException.class, () -> userService.createUser(testUser));
     }
 
     @Test
@@ -125,7 +125,7 @@ class UserServiceTest {
         when(userRepository.existsByUsername(any())).thenReturn(false);
         when(userRepository.existsByEmail(any())).thenReturn(true);
         
-        assertThrows(BusinessException.class, () -> userService.createUser(testUser));
+        assertThrows(InvalidParameterException.class, () -> userService.createUser(testUser));
     }
 
     @Test

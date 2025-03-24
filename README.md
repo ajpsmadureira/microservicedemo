@@ -6,6 +6,7 @@ A REST API for managing auctions in an electronic marketplace, built with Spring
 
 - User Authentication and Authorization
 - Lot Management with Photo Upload
+- Bid Management
 - Role-based Access Control (Admin/User)
 - API Documentation with OpenAPI/Swagger
 - Secure File Storage
@@ -81,7 +82,8 @@ On first startup, the application automatically creates a default admin user:
 You can use these credentials to:
 1. Access the API
 2. Create additional users
-3. Manage lot data
+3. Create and manage lots
+4. Create and manage bids
 
 For security reasons, it's recommended to:
 1. Change the default admin password after first login
@@ -114,6 +116,10 @@ The API documentation is available through Swagger UI when running in developmen
 - POST `/api/lots/{id}/photo` - Set lot photo
 - PUT `/api/lots/{id}` - Update lot
 - DELETE `/api/lots/{id}` - Delete lot
+
+#### Bids
+- POST `/api/bids` - Create bid
+- DELETE `/api/bids/{id}` - Delete bid
 
 ## Configuration
 
@@ -168,6 +174,7 @@ The project includes:
 - Integration tests for controllers
 - Security tests
 - File upload tests
+- Functional tests
 
 ## Production Deployment
 

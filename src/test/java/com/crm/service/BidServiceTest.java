@@ -2,6 +2,8 @@ package com.crm.service;
 
 import com.crm.domain.*;
 import com.crm.exception.BusinessException;
+import com.crm.exception.InvalidParameterException;
+import com.crm.exception.ResourceNotFoundException;
 import com.crm.mapper.bid.BidEntityToBidMapper;
 import com.crm.persistence.entity.BidEntity;
 import com.crm.persistence.entity.LotEntity;
@@ -108,7 +110,7 @@ class BidServiceTest {
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
         when(lotRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testUser));
+        assertThrows(ResourceNotFoundException.class, () -> bidService.createBid(testBid, testUser));
     }
 
     @Test
@@ -118,7 +120,7 @@ class BidServiceTest {
         testLotEntity.setState(LotState.CREATED);
         when(lotRepository.findById(any())).thenReturn(Optional.ofNullable(testLotEntity));
 
-        assertThrows(BusinessException.class, () -> bidService.createBid(testBid, testUser));
+        assertThrows(InvalidParameterException.class, () -> bidService.createBid(testBid, testUser));
     }
 
     @Test
@@ -146,7 +148,7 @@ class BidServiceTest {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        assertThrows(BusinessException.class, () -> bidService.deleteBid(1));
+        assertThrows(InvalidParameterException.class, () -> bidService.deleteBid(1));
 
         verify(bidRepository, times(0)).deleteById(1);
     }
@@ -156,7 +158,7 @@ class BidServiceTest {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> bidService.cancelBid(1));
+        assertThrows(ResourceNotFoundException.class, () -> bidService.cancelBid(1));
 
         verify(bidRepository, times(0)).save(any());
     }
@@ -180,17 +182,17 @@ class BidServiceTest {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        assertThrows(BusinessException.class, () -> bidService.cancelBid(1));
+        assertThrows(InvalidParameterException.class, () -> bidService.cancelBid(1));
 
         verify(bidRepository, times(0)).save(any());
     }
 
     @Test
-    void acceptBid_WhenBidDoesNotExist_ShouldThrowException() {
+    void acceptBid_whenBidDoesNotExist_ShouldThrowException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+        assertThrows(ResourceNotFoundException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
     }
@@ -216,7 +218,7 @@ class BidServiceTest {
         testBidEntity.setUntil(now().minus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
-        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+        assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
     }
@@ -226,7 +228,7 @@ class BidServiceTest {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+        assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
     }

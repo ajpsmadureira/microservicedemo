@@ -6,9 +6,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-import com.crm.exception.ErrorResponse;
 import com.crm.mapper.lot.LotCreateRequestToLotMapper;
 import com.crm.mapper.lot.LotUpdateRequestToLotMapper;
+import com.crm.web.api.error.ErrorResponse;
 import com.crm.web.api.lot.LotCreateRequest;
 import com.crm.exception.ControllerException;
 import com.crm.mapper.lot.LotToLotResponseMapper;

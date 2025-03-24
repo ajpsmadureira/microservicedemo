@@ -1,12 +1,12 @@
 package com.crm.web.controller;
 
 import com.crm.exception.ControllerException;
-import com.crm.exception.ErrorResponse;
 import com.crm.mapper.lot.*;
 import com.crm.service.auth.AuthService;
 import com.crm.service.bid.BidService;
 import com.crm.web.api.bid.BidCreateRequest;
 import com.crm.web.api.bid.BidResponse;
+import com.crm.web.api.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,6 +48,11 @@ public class BidController {
                     responseCode = "400",
                     description = "Invalid input data or incorrect request format",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -60,5 +65,26 @@ public class BidController {
                 .map(bid -> bidService.createBid(bid, authService.getCurrentUser()))
                 .map(bidToBidResponseMapper::map)
                 .orElseThrow(ControllerException::new), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Delete bid", description = "Delete a bid")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bid successfully deleted"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data or incorrect request format",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Bid not found"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @DeleteMapping("/{id}")
+    public void deleteBid(@Parameter(description = "Bid ID", required = true) @PathVariable Integer id) {
+
+        bidService.deleteBid(id);
     }
 }

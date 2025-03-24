@@ -3,7 +3,7 @@ package com.crm.web.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.crm.exception.ErrorResponse;
+import com.crm.web.api.error.ErrorResponse;
 import com.crm.web.api.user.UserCreateRequest;
 import com.crm.web.api.user.UserResponse;
 import com.crm.web.api.user.UserUpdateRequest;

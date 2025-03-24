@@ -3,7 +3,7 @@ package com.crm.web.controller;
 import com.crm.service.auth.AuthService;
 import com.crm.web.api.auth.LoginRequest;
 import com.crm.web.api.auth.LoginResponse;
-import com.crm.exception.ErrorResponse;
+import com.crm.web.api.error.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
