@@ -1,4 +1,4 @@
-package com.crm.service;
+package com.crm.service.auth;
 
 import com.crm.mapper.user.UserEntityToUserMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;

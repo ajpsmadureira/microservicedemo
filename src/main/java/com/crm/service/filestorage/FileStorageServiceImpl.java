@@ -1,4 +1,4 @@
-package com.crm.service;
+package com.crm.service.filestorage;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,11 +13,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class FileStorageService {
+public class FileStorageServiceImpl implements FileStorageService {
 
     private final Path fileStorageLocation;
 
-    public FileStorageService(@Value("${app.file-storage-location:uploads}") String uploadDir) {
+    public FileStorageServiceImpl(@Value("${app.file-storage-location:uploads}") String uploadDir) {
 
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
 

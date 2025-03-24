@@ -1,4 +1,4 @@
-package com.crm.service;
+package com.crm.service.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final LotRepository lotRepository;

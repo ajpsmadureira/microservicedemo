@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.crm.domain.Lot;
 import com.crm.domain.User;
-import com.crm.service.AuthService;
-import com.crm.service.LotService;
+import com.crm.service.auth.AuthService;
+import com.crm.service.lot.LotService;
 import com.crm.util.TestDataFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,5 +1,6 @@
 package com.crm.web.controller;
 
+import com.crm.service.auth.AuthService;
 import com.crm.web.api.auth.LoginRequest;
 import com.crm.web.api.auth.LoginResponse;
 import com.crm.exception.ErrorResponse;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.crm.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

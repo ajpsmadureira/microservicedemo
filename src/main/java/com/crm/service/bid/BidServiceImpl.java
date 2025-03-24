@@ -1,4 +1,4 @@
-package com.crm.service;
+package com.crm.service.bid;
 
 import com.crm.domain.*;
 import com.crm.exception.BusinessException;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class BidService {
+public class BidServiceImpl implements BidService {
 
     private final UserRepository userRepository;
     private final LotRepository lotRepository;

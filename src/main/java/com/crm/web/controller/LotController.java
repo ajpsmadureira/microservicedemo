@@ -23,8 +23,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.crm.web.api.lot.LotResponse;
-import com.crm.service.AuthService;
-import com.crm.service.LotService;
+import com.crm.service.auth.AuthService;
+import com.crm.service.lot.LotService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

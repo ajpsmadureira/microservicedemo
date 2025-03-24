@@ -16,6 +16,7 @@ import com.crm.mapper.user.UserEntityToUserMapper;
 import com.crm.persistence.entity.UserEntity;
 import com.crm.persistence.repository.LotRepository;
 import com.crm.persistence.repository.UserRepository;
+import com.crm.service.user.UserServiceImpl;
 import com.crm.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class UserServiceTest {
     private UserEntityToUserMapper userEntityToUserMapper;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private User testUser;
 

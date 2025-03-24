@@ -9,6 +9,7 @@ import com.crm.persistence.entity.UserEntity;
 import com.crm.persistence.repository.BidRepository;
 import com.crm.persistence.repository.LotRepository;
 import com.crm.persistence.repository.UserRepository;
+import com.crm.service.bid.BidServiceImpl;
 import com.crm.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class BidServiceTest {
     private BidEntityToBidMapper bidEntityToBidMapper;
 
     @InjectMocks
-    private BidService bidService;
+    private BidServiceImpl bidService;
 
     private User testUser;
 

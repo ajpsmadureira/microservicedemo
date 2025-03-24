@@ -1,4 +1,4 @@
-package com.crm.service;
+package com.crm.service.lot;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -9,6 +9,7 @@ import com.crm.domain.User;
 import com.crm.persistence.entity.LotEntity;
 import com.crm.mapper.lot.LotEntityToLotMapper;
 import com.crm.persistence.repository.UserRepository;
+import com.crm.service.filestorage.FileStorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class LotService {
+public class LotServiceImpl implements LotService {
 
     private final UserRepository userRepository;
     private final LotRepository lotRepository;
