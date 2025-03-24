@@ -47,8 +47,6 @@ class BidServiceTest {
 
     private UserEntity testUserEntity;
 
-    //private Lot testLot;
-
     private LotEntity testLotEntity;
 
     private Bid testBid;
@@ -85,7 +83,7 @@ class BidServiceTest {
         assertEquals(testBid.getAmount(), testBidEntity.getAmount());
         assertEquals(testBid.getUntil(), testBidEntity.getUntil());
         assertEquals(testLotEntity, bidEntityCaptured.getLot());
-        assertEquals(BidState.OPENED, bidEntityCaptured.getState());
+        assertEquals(BidState.CREATED, bidEntityCaptured.getState());
         assertEquals(testUserEntity, bidEntityCaptured.getCreatedBy());
         assertEquals(testUserEntity, bidEntityCaptured.getLastModifiedBy());
 
@@ -124,6 +122,8 @@ class BidServiceTest {
     @Test
     void deleteBid_noJpaException_ShouldNotThrowBusinessException() {
 
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
         assertDoesNotThrow(() -> bidService.deleteBid(1));
 
         verify(bidRepository).deleteById(1);
@@ -132,8 +132,20 @@ class BidServiceTest {
     @Test
     void deleteBid_withJpaException_ShouldThrowBusinessException() {
 
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
         doThrow(new RuntimeException()).when(bidRepository).deleteById(1);
 
         assertThrows(BusinessException.class, () -> bidService.deleteBid(1));
+    }
+
+    @Test
+    void deleteBid_acceptedState_ShouldThrowBusinessException() {
+
+        testBidEntity.setState(BidState.ACCEPTED);
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        assertThrows(BusinessException.class, () -> bidService.deleteBid(1));
+
+        verify(bidRepository, times(0)).deleteById(1);
     }
 } 

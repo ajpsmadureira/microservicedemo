@@ -96,7 +96,7 @@ public class TestDataFactory {
                 .id(1)
                 .amount(BID_AMOUNT)
                 .until(BID_TIMESTAMP)
-                .state(BidState.OPENED)
+                .state(BidState.CREATED)
                 .lotId(lot.getId())
                 .createdByUserId(user.getId())
                 .lastModifiedByUserId(user.getId())
@@ -110,7 +110,7 @@ public class TestDataFactory {
         bidEntity.setAmount(BID_AMOUNT);
         bidEntity.setLot(lotEntity);
         bidEntity.setUntil(BID_TIMESTAMP);
-        bidEntity.setState(BidState.OPENED);
+        bidEntity.setState(BidState.CREATED);
         bidEntity.setCreatedBy(userEntity);
         bidEntity.setLastModifiedBy(userEntity);
         bidEntity.setCreatedAt(BID_TIMESTAMP);

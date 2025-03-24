@@ -41,7 +41,7 @@ public class BidServiceImpl implements BidService {
             bidEntity.setUntil(bid.getUntil());
             bidEntity.setAmount(bid.getAmount());
             bidEntity.setLot(lotEntity);
-            bidEntity.setState(BidState.OPENED);
+            bidEntity.setState(BidState.CREATED);
             bidEntity.setCreatedBy(currentUserEntity);
             bidEntity.setLastModifiedBy(currentUserEntity);
 
@@ -60,6 +60,13 @@ public class BidServiceImpl implements BidService {
 
         try {
 
+            BidEntity bidEntity = findBidByIdOrThrowException(id);
+
+            if (bidEntity.getState() == BidState.ACCEPTED) {
+
+                throw new RuntimeException("An accepted bid cannot be deleted: {}" + bidEntity.getId());
+            }
+
             bidRepository.deleteById(id);
 
         } catch (Exception e) {
@@ -76,5 +83,10 @@ public class BidServiceImpl implements BidService {
     private LotEntity findLotByIdOrThrowException(Integer id) {
 
         return lotRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find lot with id: " + id));
+    }
+
+    private BidEntity findBidByIdOrThrowException(Integer id) {
+
+        return bidRepository.findById(id).orElseThrow(() -> new BusinessException("Failed to find bid with id: " + id));
     }
 } 

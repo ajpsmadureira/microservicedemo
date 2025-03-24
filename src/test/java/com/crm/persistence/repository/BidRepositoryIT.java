@@ -41,7 +41,7 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
         BidEntity bidRetrieved = bidRepository.findById(bidSaved.getId()).orElseThrow();
 
         assertEquals(bid.getAmount(), bidRetrieved.getAmount());
-        assertEquals(BidState.OPENED, bidRetrieved.getState());
+        assertEquals(BidState.CREATED, bidRetrieved.getState());
         assertEquals(bid.getLot().getId(), bidRetrieved.getLot().getId());
         assertEquals(bid.getCreatedBy().getId(), bidRetrieved.getCreatedBy().getId());
         assertEquals(bid.getLastModifiedBy().getId(), bidRetrieved.getLastModifiedBy().getId());
