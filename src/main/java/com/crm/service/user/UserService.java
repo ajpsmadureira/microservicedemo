@@ -11,5 +11,4 @@ public interface UserService {
     User createUser(User user);
     User updateUser(Integer id, User userDetails);
     void deleteUser(Integer id);
-    User toggleAdminStatus(Integer id);
 }

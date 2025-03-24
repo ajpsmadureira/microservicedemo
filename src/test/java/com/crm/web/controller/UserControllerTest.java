@@ -115,16 +115,4 @@ class UserControllerTest {
         mockMvc.perform(delete("/api/admin/users/1"))
                 .andExpect(status().isOk());
     }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void toggleAdminStatus_ShouldToggleStatus() throws Exception {
-
-        User adminUser = TestDataFactory.createTestAdmin();
-        when(userService.toggleAdminStatus(1)).thenReturn(adminUser);
-
-        mockMvc.perform(put("/api/admin/users/1/toggle-admin"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isAdmin").value(true));
-    }
 } 

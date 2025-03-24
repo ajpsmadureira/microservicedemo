@@ -106,7 +106,6 @@ The API documentation is available through Swagger UI when running in developmen
 - POST `/api/admin/users` - Create user
 - PUT `/api/admin/users/{id}` - Update user
 - DELETE `/api/admin/users/{id}` - Delete user
-- PUT `/api/admin/users/{id}/toggle-admin` - Toggle admin status
 
 #### Lots
 - GET `/api/lots` - List all lots

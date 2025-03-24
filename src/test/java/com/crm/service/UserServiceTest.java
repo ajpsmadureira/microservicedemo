@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -167,19 +166,5 @@ class UserServiceTest {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
         
         assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1));
-    }
-
-    @Test
-    void toggleAdminStatus_ShouldToggleAdminStatus() {
-
-        UserEntity userEntity = TestDataFactory.createTestUserEntity();
-
-        when(userRepository.findById(1)).thenReturn(Optional.of(userEntity));
-        when(userRepository.save(any())).thenAnswer(invocation -> {
-            assertTrue(((UserEntity) invocation.getArgument(0)).isAdmin());
-            return invocation.getArgument(0);
-        });
-        
-        userService.toggleAdminStatus(1);
     }
 } 

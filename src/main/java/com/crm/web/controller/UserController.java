@@ -153,26 +153,4 @@ public class UserController {
 
         userService.deleteUser(id);
     }
-
-    @Operation(summary = "Toggle admin status", description = "Toggle the admin status of a user")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Admin status successfully toggled",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "User not found",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            )
-    })
-    @PutMapping("/{id}/toggle-admin")
-    public UserResponse toggleAdminStatus(@Parameter(description = "User ID", required = true) @PathVariable Integer id) {
-
-        return Optional.of(id)
-                .map(userService::toggleAdminStatus)
-                .map(userToUserResponseMapper::map)
-                .orElseThrow(ControllerException::new);
-    }
 }

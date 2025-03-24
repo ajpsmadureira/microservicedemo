@@ -168,25 +168,6 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    @Transactional
-    public User toggleAdminStatus(Integer id) {
-
-        UserEntity userEntity = findByIdOrThrowException(id);
-
-        userEntity.setAdmin(!userEntity.isAdmin());
-
-        try {
-
-            UserEntity userEntityUpdated = userRepository.save(userEntity);
-
-            return userEntityToUserMapper.map(userEntityUpdated);
-
-        } catch (Exception e) {
-
-            throw new BusinessException("Failed to toggle admin status: " + e.getMessage());
-        }
-    }
-
     private UserEntity findByIdOrThrowException(Integer id) {
 
         return userRepository
