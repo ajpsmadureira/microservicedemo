@@ -1,5 +1,6 @@
-package com.crm.config;
+package com.crm.web.controller;
 
+import com.crm.config.SecurityConfig;
 import com.crm.mapper.lot.*;
 import com.crm.mapper.user.UserCreateRequestToUserMapper;
 import com.crm.mapper.user.UserToUserResponseMapper;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.mock;
 
 @TestConfiguration
 @Import(SecurityConfig.class)
-public class TestConfig {
+public class TestControllerConfig {
 
     @Bean
     public JwtTokenProvider jwtTokenProvider() {

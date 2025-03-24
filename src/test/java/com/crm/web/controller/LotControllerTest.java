@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 
-import com.crm.config.TestConfig;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -28,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 
 @WebMvcTest(LotController.class)
-@Import(TestConfig.class)
+@Import(TestControllerConfig.class)
 class LotControllerTest {
 
     @Autowired
@@ -56,7 +55,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void getAllLots_ShouldReturnLots() throws Exception {
+    void getAllLots_whenAuthenticated_shouldReturnLots() throws Exception {
 
         when(lotService.getAllLots()).thenReturn(Collections.singletonList(testLot));
 
@@ -67,7 +66,7 @@ class LotControllerTest {
     }
 
     @Test
-    void getAllLots_WhenNotAuthenticated_ShouldReturnUnauthorized() throws Exception {
+    void getAllLots_whenNotAuthenticated_shouldReturnUnauthorized() throws Exception {
 
         mockMvc.perform(get("/api/lots"))
                 .andExpect(status().isUnauthorized());
@@ -75,7 +74,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void getLotById_WhenLotExists_ShouldReturnLot() throws Exception {
+    void getLotById_whenLotExists_shouldReturnLot() throws Exception {
 
         when(lotService.getLotById(1)).thenReturn(testLot);
 
@@ -87,7 +86,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void createLot_WithValidData_ShouldCreateLot() throws Exception {
+    void createLot_whenDataIsValid_shouldCreateLot() throws Exception {
 
         when(authService.getCurrentUser()).thenReturn(testUser);
         when(lotService.createLot(any(Lot.class), any(User.class)))
@@ -103,7 +102,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void createLot_WithInvalidData_ShouldReturnBadRequest() throws Exception {
+    void createLot_whenDataIsInvalid_shouldReturnBadRequest() throws Exception {
 
         mockMvc.perform(post("/api/lots")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +112,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void updateLot_WithValidData_ShouldUpdateLot() throws Exception {
+    void updateLot_whenDataIsValid_shouldUpdateLot() throws Exception {
 
         when(authService.getCurrentUser()).thenReturn(testUser);
         when(lotService.updateLotDetails(eq(1), any(Lot.class), any(User.class)))
@@ -129,7 +128,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void updateLotPhoto_WithValidData_ShouldUpdateLotPhoto() throws Exception {
+    void updateLotPhoto_whenDataIsValid_shouldUpdateLotPhoto() throws Exception {
 
         MockMultipartFile photoFile = new MockMultipartFile(
                 "file",
@@ -147,7 +146,7 @@ class LotControllerTest {
 
     @Test
     @WithMockUser
-    void deleteLot_ShouldDeleteLot() throws Exception {
+    void deleteLot() throws Exception {
         mockMvc.perform(delete("/api/lots/1"))
                 .andExpect(status().isOk());
     }

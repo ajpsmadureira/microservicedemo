@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 
-import com.crm.config.TestConfig;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @WebMvcTest(AuthController.class)
-@Import(TestConfig.class)
+@Import(TestControllerConfig.class)
 class AuthControllerTest {
 
     @Autowired
@@ -63,7 +62,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void login_WithValidCredentials_ShouldReturnToken() throws Exception {
+    void login() throws Exception {
 
         String expectedToken = "test.jwt.token";
         when(authService.login(anyString(), anyString())).thenReturn(expectedToken);

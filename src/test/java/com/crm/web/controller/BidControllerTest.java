@@ -1,6 +1,5 @@
 package com.crm.web.controller;
 
-import com.crm.config.TestConfig;
 import com.crm.domain.Bid;
 import com.crm.domain.Lot;
 import com.crm.domain.User;
@@ -26,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BidController.class)
-@Import(TestConfig.class)
+@Import(TestControllerConfig.class)
 class BidControllerTest {
 
     @Autowired

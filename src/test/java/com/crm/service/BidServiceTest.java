@@ -71,7 +71,7 @@ class BidServiceTest {
     }
 
     @Test
-    void createBid_baseCase_ShouldCreateBid() {
+    void createBid_whenAllConditionsExist_shouldCreateBid() {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
         testLotEntity.setState(LotState.AUCTIONED);
@@ -97,7 +97,7 @@ class BidServiceTest {
     }
 
     @Test
-    void createBid_WhenUserDoesNotExist_ShouldThrowException() {
+    void createBid_whenUserDoesNotExist_shouldThrowException() {
 
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -105,7 +105,7 @@ class BidServiceTest {
     }
 
     @Test
-    void createBid_WhenLotDoesNotExist_ShouldThrowException() {
+    void createBid_whenLotDoesNotExist_shouldThrowException() {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
         when(lotRepository.findById(any())).thenReturn(Optional.empty());
@@ -114,7 +114,7 @@ class BidServiceTest {
     }
 
     @Test
-    void createBid_WhenLotIsNotAuctioned_ShouldThrowException() {
+    void createBid_whenLotIsNotAuctioned_shouldThrowException() {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
         testLotEntity.setState(LotState.CREATED);
@@ -124,7 +124,7 @@ class BidServiceTest {
     }
 
     @Test
-    void deleteBid_noJpaException_ShouldNotThrowBusinessException() {
+    void deleteBid_whenNoJpaException_shouldNotThrowBusinessException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
@@ -134,7 +134,7 @@ class BidServiceTest {
     }
 
     @Test
-    void deleteBid_withJpaException_ShouldThrowBusinessException() {
+    void deleteBid_whenJpaException_shouldThrowBusinessException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
@@ -144,7 +144,7 @@ class BidServiceTest {
     }
 
     @Test
-    void deleteBid_acceptedState_ShouldThrowBusinessException() {
+    void deleteBid_whenBidIsInAcceptedState_shouldThrowBusinessException() {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
@@ -154,7 +154,7 @@ class BidServiceTest {
     }
 
     @Test
-    void cancelBid_WhenBidDoesNotExist_ShouldThrowException() {
+    void cancelBid_whenBidDoesNotExist_shouldThrowException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -164,7 +164,7 @@ class BidServiceTest {
     }
 
     @Test
-    void cancelBid_createdState_ShouldUpdateState() {
+    void cancelBid_whenBidIsInCreatedState_shouldUpdateState() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
@@ -178,7 +178,7 @@ class BidServiceTest {
     }
 
     @Test
-    void cancelBid_otherThanCreatedState_ShouldThrowBusinessException() {
+    void cancelBid_whenBidIsNotInCreatedState_shouldThrowBusinessException() {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
@@ -188,7 +188,7 @@ class BidServiceTest {
     }
 
     @Test
-    void acceptBid_whenBidDoesNotExist_ShouldThrowException() {
+    void acceptBid_whenBidDoesNotExist_shouldThrowException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -198,7 +198,7 @@ class BidServiceTest {
     }
 
     @Test
-    void acceptBid_createdStateNotExpired_ShouldUpdateState() {
+    void acceptBid_whenBidIsInCreatedStateAndNotExpired_shouldUpdateState() {
 
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
@@ -213,7 +213,7 @@ class BidServiceTest {
     }
 
     @Test
-    void acceptBid_createdStateExpired_ShouldThrowException() {
+    void acceptBid_whenBidIsInCreatedStateAndExpired_shouldThrowException() {
 
         testBidEntity.setUntil(now().minus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
@@ -224,7 +224,7 @@ class BidServiceTest {
     }
 
     @Test
-    void acceptBid_otherThanCreatedState_ShouldThrowBusinessException() {
+    void acceptBid_whenBidIsNotInCreatedState_shouldThrowBusinessException() {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));

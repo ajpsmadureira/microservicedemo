@@ -62,7 +62,7 @@ class UserServiceTest {
     // TODO: add negative scenarios
 
     @Test
-    void getAllUsers_ShouldReturnAllUsers() {
+    void getAllUsers_whenAllConditionsExist_shouldReturnAllUsers() {
 
         when(userRepository.findAll()).thenReturn(Collections.singletonList(testUserEntity));
         when(userEntityToUserMapper.map(any())).thenReturn(testUser);
@@ -75,7 +75,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserById_WhenUserExists_ShouldReturnUser() {
+    void getUserById_whenUserExists_shouldReturnUser() {
 
         when(userRepository.findById(1)).thenReturn(Optional.of(testUserEntity));
         when(userEntityToUserMapper.map(any())).thenReturn(testUser);
@@ -87,7 +87,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserById_WhenUserDoesNotExist_ShouldThrowException() {
+    void getUserById_whenUserDoesNotExist_shouldThrowException() {
 
         when(userRepository.findById(1)).thenReturn(Optional.empty());
         
@@ -95,7 +95,7 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser_WhenUsernameAndEmailAreUnique_ShouldCreateUser() {
+    void createUser_whenUsernameAndEmailAreUnique_shouldCreateUser() {
 
         when(userRepository.existsByUsername(any())).thenReturn(false);
         when(userRepository.existsByEmail(any())).thenReturn(false);
@@ -111,7 +111,7 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser_WhenUsernameExists_ShouldThrowException() {
+    void createUser_whenUsernameExists_shouldThrowException() {
 
         when(userRepository.existsByUsername(any())).thenReturn(true);
         
@@ -119,7 +119,7 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser_WhenEmailExists_ShouldThrowException() {
+    void createUser_whenEmailExists_shouldThrowException() {
 
         when(userRepository.existsByUsername(any())).thenReturn(false);
         when(userRepository.existsByEmail(any())).thenReturn(true);
@@ -128,7 +128,7 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUser_WhenUserExists_ShouldUpdateUser() {
+    void updateUser_whenUserExists_shouldUpdateUser() {
 
         UserEntity existingUserEntity = TestDataFactory.createTestUserEntity();
         existingUserEntity.setId(1);
@@ -150,7 +150,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUser_WhenUserExistsAndAssociatedLotsDoNotExist_ShouldDeleteUser() {
+    void deleteUser_whenUserExistsAndAssociatedLotsDoNotExist_shouldDeleteUser() {
 
         when(userRepository.findById(1)).thenReturn(Optional.of(testUserEntity));
         when(lotRepository.findByCreatedBy(any())).thenReturn(List.of());
@@ -161,7 +161,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUser_WhenUserDoesNotExist_ShouldThrowException() {
+    void deleteUser_whenUserDoesNotExist_shouldThrowException() {
 
         when(userRepository.findById(1)).thenReturn(Optional.empty());
         

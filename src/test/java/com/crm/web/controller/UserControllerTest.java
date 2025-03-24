@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 
-import com.crm.config.TestConfig;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -28,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 
 @WebMvcTest(UserController.class)
-@Import(TestConfig.class)
+@Import(TestControllerConfig.class)
 class UserControllerTest {
 
     @Autowired
@@ -50,7 +49,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void getAllUsers_ShouldReturnUsers() throws Exception {
+    void getAllUsers_whenAdmin_shouldReturnUsers() throws Exception {
 
         when(userService.getAllUsers()).thenReturn(Collections.singletonList(testUser));
 
@@ -62,7 +61,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "USER")
-    void getAllUsers_WhenNotAdmin_ShouldReturnForbidden() throws Exception {
+    void getAllUsers_whenNotAdmin_shouldReturnForbidden() throws Exception {
 
         mockMvc.perform(get("/api/admin/users"))
                 .andExpect(status().isForbidden());
@@ -70,7 +69,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void getUserById_WhenUserExists_ShouldReturnUser() throws Exception {
+    void getUserById_whenUserExists_shouldReturnUser() throws Exception {
 
         when(userService.getUserById(1)).thenReturn(testUser);
 
@@ -82,7 +81,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void createUser_WithValidData_ShouldCreateUser() throws Exception {
+    void createUser_whenDataIsValid_shouldCreateUser() throws Exception {
 
         when(userService.createUser(any(User.class))).thenReturn(testUser);
 
@@ -96,7 +95,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void updateUser_WithValidData_ShouldUpdateUser() throws Exception {
+    void updateUser_whenDataIsValid_shouldUpdateUser() throws Exception {
 
         when(userService.updateUser(any(Integer.class), any(User.class))).thenReturn(testUser);
 
@@ -110,7 +109,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void deleteUser_ShouldDeleteUser() throws Exception {
+    void deleteUser_whenDataIsValid_shouldDeleteUser() throws Exception {
 
         mockMvc.perform(delete("/api/admin/users/1"))
                 .andExpect(status().isOk());
