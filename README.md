@@ -1,4 +1,4 @@
-# CRM Service
+# Auctions Application
 
 A REST API for managing auctions in an electronic marketplace, built with Spring Boot.
 
@@ -55,7 +55,7 @@ Swagger UI will be available at `http://localhost:8080/api/swagger-ui.html`
 
 1. Create the database:
    ```bash
-   createdb crm_db
+   createdb auctions_db
    ```
 
 1. Initialize the database:
@@ -77,7 +77,7 @@ On first startup, the application automatically creates a default admin user:
 
 - Username: `admin`
 - Password: `admin123`
-- Email: `admin@crm.com`
+- Email: `admin@auctions.com`
 
 You can use these credentials to:
 1. Access the API
@@ -185,7 +185,7 @@ The project includes:
 2. Run the container:
    ```bash
    docker run -p 8080:8080 \
-     -e SPRING_DATASOURCE_URL=jdbc:postgresql://your-db-host:5432/crm_db \
+     -e SPRING_DATASOURCE_URL=jdbc:postgresql://your-db-host:5432/auctions_db \
      -e SPRING_DATASOURCE_USERNAME=your-username \
      -e SPRING_DATASOURCE_PASSWORD=your-password \
      -e JWT_SECRET=your-production-secret \
