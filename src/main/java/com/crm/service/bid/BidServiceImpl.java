@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.time.Instant.now;
+
 @Service
 @RequiredArgsConstructor
 public class BidServiceImpl implements BidService {
@@ -33,7 +35,7 @@ public class BidServiceImpl implements BidService {
 
             if (lotEntity.getState() != LotState.AUCTIONED) {
 
-                throw new RuntimeException("Lot is not being auctioned: {}" + lotEntity.getId());
+                throw new RuntimeException("Lot is not being auctioned: " + lotEntity.getId());
             }
 
             BidEntity bidEntity = new BidEntity();
@@ -64,7 +66,7 @@ public class BidServiceImpl implements BidService {
 
             if (bidEntity.getState() == BidState.ACCEPTED) {
 
-                throw new RuntimeException("An accepted bid cannot be deleted: {}" + bidEntity.getId());
+                throw new RuntimeException("An accepted bid cannot be deleted: " + bidEntity.getId());
             }
 
             bidRepository.deleteById(id);
@@ -72,6 +74,55 @@ public class BidServiceImpl implements BidService {
         } catch (Exception e) {
 
             throw new BusinessException("Failed to delete bid: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void cancelBid(Integer id) {
+
+        try {
+
+            BidEntity bidEntity = findBidByIdOrThrowException(id);
+
+            if (bidEntity.getState() != BidState.CREATED) {
+
+                throw new RuntimeException("Only bids in created state can be cancelled. Bid state is " + bidEntity.getState());
+            }
+
+            bidEntity.setState(BidState.CANCELLED);
+
+            bidRepository.save(bidEntity);
+
+        } catch (Exception e) {
+
+            throw new BusinessException("Failed to cancel bid: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void acceptBid(Integer id) {
+
+        try {
+
+            BidEntity bidEntity = findBidByIdOrThrowException(id);
+
+            if (bidEntity.getState() != BidState.CREATED) {
+
+                throw new RuntimeException("Only bids in created state can be accepted. Bid state is " + bidEntity.getState());
+            }
+
+            if (bidEntity.getUntil().isBefore(now())) {
+
+                throw new RuntimeException("Bid is outdated. Bid is until " + bidEntity.getUntil());
+            }
+
+            bidEntity.setState(BidState.ACCEPTED);
+
+            bidRepository.save(bidEntity);
+
+        } catch (Exception e) {
+
+            throw new BusinessException("Failed to accept bid: " + e.getMessage());
         }
     }
 

@@ -19,8 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -124,7 +126,7 @@ class BidServiceTest {
 
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
-        assertDoesNotThrow(() -> bidService.deleteBid(1));
+        bidService.deleteBid(1);
 
         verify(bidRepository).deleteById(1);
     }
@@ -147,5 +149,85 @@ class BidServiceTest {
         assertThrows(BusinessException.class, () -> bidService.deleteBid(1));
 
         verify(bidRepository, times(0)).deleteById(1);
+    }
+
+    @Test
+    void cancelBid_WhenBidDoesNotExist_ShouldThrowException() {
+
+        when(bidRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(BusinessException.class, () -> bidService.cancelBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelBid_createdState_ShouldUpdateState() {
+
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
+        bidService.cancelBid(1);
+
+        ArgumentCaptor<BidEntity> bidEntityCaptor = ArgumentCaptor.forClass(BidEntity.class);
+        verify(bidRepository).save(bidEntityCaptor.capture());
+        BidEntity bidEntityCaptured = bidEntityCaptor.getValue();
+        assertEquals(testBidEntity.getId(), bidEntityCaptured.getId());
+        assertEquals(BidState.CANCELLED, bidEntityCaptured.getState());
+    }
+
+    @Test
+    void cancelBid_otherThanCreatedState_ShouldThrowBusinessException() {
+
+        testBidEntity.setState(BidState.ACCEPTED);
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        assertThrows(BusinessException.class, () -> bidService.cancelBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void acceptBid_WhenBidDoesNotExist_ShouldThrowException() {
+
+        when(bidRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void acceptBid_createdStateNotExpired_ShouldUpdateState() {
+
+        testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
+        bidService.acceptBid(1);
+
+        ArgumentCaptor<BidEntity> bidEntityCaptor = ArgumentCaptor.forClass(BidEntity.class);
+        verify(bidRepository).save(bidEntityCaptor.capture());
+        BidEntity bidEntityCaptured = bidEntityCaptor.getValue();
+        assertEquals(testBidEntity.getId(), bidEntityCaptured.getId());
+        assertEquals(BidState.ACCEPTED, bidEntityCaptured.getState());
+    }
+
+    @Test
+    void acceptBid_createdStateExpired_ShouldThrowException() {
+
+        testBidEntity.setUntil(now().minus(1, ChronoUnit.MINUTES));
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
+        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void acceptBid_otherThanCreatedState_ShouldThrowBusinessException() {
+
+        testBidEntity.setState(BidState.ACCEPTED);
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
     }
 } 
