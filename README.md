@@ -1,11 +1,12 @@
-# CRM Service
+# Auctions Application
 
-A REST API for managing customerEntity data in a small shop, built with Spring Boot.
+A REST API for managing auctions in an electronic marketplace, built with Spring Boot.
 
 ## Features
 
 - User Authentication and Authorization
-- Customer Management with Photo Upload
+- Lot Management with Photo Upload
+- Bid Management
 - Role-based Access Control (Admin/User)
 - API Documentation with OpenAPI/Swagger
 - Secure File Storage
@@ -52,12 +53,12 @@ Swagger UI will be available at `http://localhost:8080/api/swagger-ui.html`
 
 ### Local Development
 
-1. Configure PostgreSQL:
+1. Create the database:
    ```bash
-   createdb crm_db
+   createdb auctions_db
    ```
 
-1. Configure PostgreSQL:
+1. Initialize the database:
    ```bash
    flyway -configFiles=db/conf/flyway.dev.conf baseline migrate
    ```
@@ -72,16 +73,17 @@ Swagger UI will be available at `http://localhost:8080/api/swagger-ui.html`
 
 ## Default Admin User
 
-On first startup, the application automatically creates a default admin userEntity:
+On first startup, the application automatically creates a default admin user:
 
 - Username: `admin`
 - Password: `admin123`
-- Email: `admin@crm.com`
+- Email: `admin@auctions.com`
 
 You can use these credentials to:
 1. Access the API
 2. Create additional users
-3. Manage customer data
+3. Create and manage lots
+4. Create and manage bids
 
 For security reasons, it's recommended to:
 1. Change the default admin password after first login
@@ -96,24 +98,27 @@ The API documentation is available through Swagger UI when running in developmen
 ### Main Endpoints
 
 #### Authentication
-- POST `/api/auth/login` - Authenticate userEntity
+- POST `/api/auth/login` - Authenticate user
 
 #### Users (Admin only)
 - GET `/api/admin/users` - List all users
-- GET `/api/admin/users/{id}` - Get userEntity by ID
-- POST `/api/admin/users` - Create userEntity
-- PUT `/api/admin/users/{id}` - Update userEntity
-- DELETE `/api/admin/users/{id}` - Delete userEntity
-- PUT `/api/admin/users/{id}/toggle-admin` - Toggle admin status
+- GET `/api/admin/users/{id}` - Get user by ID
+- POST `/api/admin/users` - Create user
+- PUT `/api/admin/users/{id}` - Update user
+- DELETE `/api/admin/users/{id}` - Delete user
 
-#### Customers
-- GET `/api/customers` - List all customers
-- GET `/api/customers/{id}` - Get customerEntity by ID
-- POST `/api/customers` - Create customerEntity
-- GET `/api/customers/{id}/photo` - Get customer photo by ID
-- POST `/api/customers/{id}/photo` - Set customer photo
-- PUT `/api/customers/{id}` - Update customerEntity
-- DELETE `/api/customers/{id}` - Delete customerEntity
+#### Lots
+- GET `/api/lots` - List all lots
+- GET `/api/lots/{id}` - Get lot by ID
+- POST `/api/lots` - Create lot
+- GET `/api/lots/{id}/photo` - Get lot photo by ID
+- POST `/api/lots/{id}/photo` - Set lot photo
+- PUT `/api/lots/{id}` - Update lot
+- DELETE `/api/lots/{id}` - Delete lot
+
+#### Bids
+- POST `/api/bids` - Create bid
+- DELETE `/api/bids/{id}` - Delete bid
 
 ## Configuration
 
@@ -168,6 +173,7 @@ The project includes:
 - Integration tests for controllers
 - Security tests
 - File upload tests
+- Functional tests
 
 ## Production Deployment
 
@@ -179,7 +185,7 @@ The project includes:
 2. Run the container:
    ```bash
    docker run -p 8080:8080 \
-     -e SPRING_DATASOURCE_URL=jdbc:postgresql://your-db-host:5432/crm_db \
+     -e SPRING_DATASOURCE_URL=jdbc:postgresql://your-db-host:5432/auctions_db \
      -e SPRING_DATASOURCE_USERNAME=your-username \
      -e SPRING_DATASOURCE_PASSWORD=your-password \
      -e JWT_SECRET=your-production-secret \
@@ -210,9 +216,11 @@ src/
     └── java/
         └── com/crm/
             ├── config/        # Test configuration
-            ├── web/           # Web layer tests
+            ├── functional/    # Functional tests
+            ├── persistence/   # Persistence tests
             ├── service/       # Service tests
-            └── util/          # Test utilities
+            ├── util/          # Test utilities
+            └── web/           # Web layer tests
 ```
 
 ## Authentication
@@ -264,14 +272,14 @@ curl -X GET http://localhost:8080/api/customers \
 
 ### Register (Optional)
 
-To create a new userEntity account:
+To create a new user account:
 
 ```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "new-userEntity",
+    "username": "new-user",
     "password": "password123",
-    "email": "userEntity@example.com"
+    "email": "user@example.com"
   }'
 ```
