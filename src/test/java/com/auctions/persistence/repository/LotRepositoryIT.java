@@ -38,7 +38,7 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
         assertEquals(lotSaved.getName(), lotRetrieved.getName());
         assertEquals(lotSaved.getSurname(), lotRetrieved.getSurname());
         assertEquals(lotSaved.getPhotoUrl(), lotRetrieved.getPhotoUrl());
-        assertEquals(LotState.CREATED, lotRetrieved.getState());
+        assertEquals(LotState.AUCTIONED, lotRetrieved.getState());
         assertEquals(lot.getCreatedBy().getId(), lotRetrieved.getCreatedBy().getId());
         assertEquals(lot.getLastModifiedBy().getId(), lotRetrieved.getLastModifiedBy().getId());
         assertNotNull(lotRetrieved.getCreatedAt());

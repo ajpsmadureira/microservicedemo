@@ -191,11 +191,8 @@ class BidServiceTest {
 
         bidService.cancelBid(1);
 
-        ArgumentCaptor<BidEntity> bidEntityCaptor = ArgumentCaptor.forClass(BidEntity.class);
-        verify(bidRepository).save(bidEntityCaptor.capture());
-        BidEntity bidEntityCaptured = bidEntityCaptor.getValue();
-        assertEquals(testBidEntity.getId(), bidEntityCaptured.getId());
-        assertEquals(BidState.CANCELLED, bidEntityCaptured.getState());
+        verify(bidRepository).save(testBidEntity);
+        assertEquals(BidState.CANCELLED, testBidEntity.getState());
     }
 
     @Test
@@ -237,11 +234,11 @@ class BidServiceTest {
 
         bidService.acceptBid(1);
 
-        ArgumentCaptor<BidEntity> bidEntityCaptor = ArgumentCaptor.forClass(BidEntity.class);
-        verify(bidRepository).save(bidEntityCaptor.capture());
-        BidEntity bidEntityCaptured = bidEntityCaptor.getValue();
-        assertEquals(testBidEntity.getId(), bidEntityCaptured.getId());
-        assertEquals(BidState.ACCEPTED, bidEntityCaptured.getState());
+        verify(bidRepository).save(testBidEntity);
+        assertEquals(BidState.ACCEPTED, testBidEntity.getState());
+
+        verify(lotRepository).save(testLotEntity);
+        assertEquals(LotState.CLOSED, testLotEntity.getState());
     }
 
     @Test
@@ -253,6 +250,7 @@ class BidServiceTest {
         assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).save(any());
     }
 
     @Test
@@ -263,5 +261,39 @@ class BidServiceTest {
         assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).save(any());
+    }
+
+    @Test
+    void acceptBid_whenLotIsNotInAuctionedAcceptedState_shouldThrowBusinessException() {
+
+        testBidEntity.getLot().setState(LotState.CREATED);
+        testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
+        assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).save(any());
+    }
+
+    @Test
+    void acceptBid_whenLotRepositoryThrowsException_shouldThrowBusinessException() {
+
+        testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        when(lotRepository.save(any())).thenThrow(new RuntimeException());
+
+        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+    }
+
+    @Test
+    void acceptBid_whenBidRepositoryThrowsException_shouldThrowBusinessException() {
+
+        testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        when(bidRepository.save(any())).thenThrow(new RuntimeException());
+
+        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
     }
 } 

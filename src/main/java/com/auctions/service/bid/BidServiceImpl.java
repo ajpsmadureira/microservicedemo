@@ -143,9 +143,20 @@ public class BidServiceImpl implements BidService {
             throw new InvalidParameterException("Bid is outdated. Bid is until " + bidEntity.getUntil());
         }
 
+        LotEntity lot = bidEntity.getLot();
+
+        if (lot.getState() != LotState.AUCTIONED) {
+
+            throw new InvalidParameterException("Lot is not being auctioned. Its state is " + lot.getState());
+        }
+
         try {
 
             bidEntity.setState(BidState.ACCEPTED);
+
+            lot.setState(LotState.CLOSED);
+
+            lotRepository.save(lot);
 
             bidRepository.save(bidEntity);
 
