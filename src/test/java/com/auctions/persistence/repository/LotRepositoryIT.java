@@ -1,6 +1,8 @@
 package com.auctions.persistence.repository;
 
+import com.auctions.domain.BidState;
 import com.auctions.domain.LotState;
+import com.auctions.persistence.entity.BidEntity;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.UserEntity;
 import com.auctions.util.TestDataFactory;
@@ -20,6 +22,9 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BidRepository bidRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -138,21 +143,63 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
         assertEquals(1, lotRepository.findByLastModifiedBy(lotSaved.getLastModifiedBy()).size());
     }
 
+    @Test
+    public void shouldRejectLotCreatedBids() {
+
+        LotEntity lotSaved = lotRepository.save(getTestLotEntity());
+
+        BidEntity bidEntityFirst = TestDataFactory.createTestBidEntity(lotSaved.getCreatedBy(), lotSaved);
+        bidEntityFirst.setState(BidState.CREATED);
+        BidEntity savedBidEntityFirst = bidRepository.save(bidEntityFirst);
+
+        BidEntity bidEntitySecond = TestDataFactory.createTestBidEntity(lotSaved.getCreatedBy(), lotSaved);
+        bidEntitySecond.setState(BidState.CREATED);
+        BidEntity savedBidEntitySecond = bidRepository.save(bidEntitySecond);
+
+        lotRepository.rejectLotCreatedBids(lotSaved.getId());
+
+        entityManager.clear();
+
+        bidRepository.findById(savedBidEntityFirst.getId()).map(BidEntity::getState).ifPresent(state -> assertEquals(BidState.REJECTED, state));
+        bidRepository.findById(savedBidEntitySecond.getId()).map(BidEntity::getState).ifPresent(state -> assertEquals(BidState.REJECTED, state));
+    }
+
+    @Test
+    public void shouldNotRejectLotAcceptedAndCancelledBids() {
+
+        LotEntity lotSaved = lotRepository.save(getTestLotEntity());
+
+        BidEntity bidEntityAccepted = TestDataFactory.createTestBidEntity(lotSaved.getCreatedBy(), lotSaved);
+        bidEntityAccepted.setState(BidState.ACCEPTED);
+        BidEntity savedBidEntityAccepted = bidRepository.save(bidEntityAccepted);
+
+        BidEntity bidEntityCancelled = TestDataFactory.createTestBidEntity(lotSaved.getCreatedBy(), lotSaved);
+        bidEntityCancelled.setState(BidState.CANCELLED);
+        BidEntity savedBidEntityCancelled = bidRepository.save(bidEntityCancelled);
+
+        lotRepository.rejectLotCreatedBids(lotSaved.getId());
+
+        entityManager.clear();
+
+        bidRepository.findById(savedBidEntityAccepted.getId()).map(BidEntity::getState).ifPresent(state -> assertEquals(BidState.ACCEPTED, state));
+        bidRepository.findById(savedBidEntityCancelled.getId()).map(BidEntity::getState).ifPresent(state -> assertEquals(BidState.CANCELLED, state));
+    }
+
     private LotEntity getTestLotEntity() {
 
         UserEntity userEntity = TestDataFactory.createTestUserEntity();
 
-        LotEntity lot = TestDataFactory.createTestLotEntity(userEntity);
+        LotEntity lotEntity = TestDataFactory.createTestLotEntity(userEntity);
 
-        UserEntity user = lot.getCreatedBy();
+        UserEntity user = lotEntity.getCreatedBy();
         user.setId(null);
 
         UserEntity userSaved = userRepository.save(user);
 
-        lot.setCreatedBy(userSaved);
-        lot.setLastModifiedBy(userSaved);
-        lot.setId(null);
+        lotEntity.setCreatedBy(userSaved);
+        lotEntity.setLastModifiedBy(userSaved);
+        lotEntity.setId(null);
 
-        return lot;
+        return lotEntity;
     }
 }
