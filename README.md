@@ -39,8 +39,8 @@ A REST API for managing auctions in an electronic marketplace, built with Spring
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/crm-service.git
-   cd crm-service
+   git clone https://github.com/yourusername/auctions-application.git
+   cd auctions-application
    ```
 
 2. Start the application:
@@ -179,7 +179,7 @@ The project includes:
 
 1. Build the Docker image:
    ```bash
-   docker build -t crm-service .
+   docker build -t auctions-application .
    ```
 
 2. Run the container:
@@ -190,7 +190,7 @@ The project includes:
      -e SPRING_DATASOURCE_PASSWORD=your-password \
      -e JWT_SECRET=your-production-secret \
      -e SPRING_PROFILES_ACTIVE=prod \
-     crm-service
+     auctions-application
    ```
 
 ## Project Structure
@@ -199,7 +199,7 @@ The project includes:
 src/
 ├── main/
 │   ├── java/
-│   │   └── com/crm/
+│   │   └── com/auctions/
 │   │       ├── config/         # Configuration classes
 │   │       ├── domain/         # Domain objects
 │   │       ├── exception/      # Exception handling
@@ -214,7 +214,7 @@ src/
 │       └── application-prod.yml
 └── test/
     └── java/
-        └── com/crm/
+        └── com/auctions/
             ├── config/        # Test configuration
             ├── functional/    # Functional tests
             ├── persistence/   # Persistence tests
