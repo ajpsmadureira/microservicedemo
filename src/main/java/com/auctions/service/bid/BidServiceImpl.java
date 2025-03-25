@@ -158,6 +158,8 @@ public class BidServiceImpl implements BidService {
 
             lotRepository.save(lot);
 
+            lotRepository.rejectLotCreatedBids(lot.getId());
+
             bidRepository.save(bidEntity);
 
         } catch (Exception e) {

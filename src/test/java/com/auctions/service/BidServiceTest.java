@@ -213,6 +213,7 @@ class BidServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
     }
 
     @Test
@@ -224,6 +225,7 @@ class BidServiceTest {
         bidService.acceptBid(1);
 
         verify(bidRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
     }
 
     @Test
@@ -239,6 +241,8 @@ class BidServiceTest {
 
         verify(lotRepository).save(testLotEntity);
         assertEquals(LotState.CLOSED, testLotEntity.getState());
+
+        verify(lotRepository).rejectLotCreatedBids(testLotEntity.getId());
     }
 
     @Test
@@ -251,6 +255,7 @@ class BidServiceTest {
 
         verify(bidRepository, times(0)).save(any());
         verify(lotRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
     }
 
     @Test
@@ -262,6 +267,7 @@ class BidServiceTest {
 
         verify(bidRepository, times(0)).save(any());
         verify(lotRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
     }
 
     @Test
@@ -275,16 +281,32 @@ class BidServiceTest {
 
         verify(bidRepository, times(0)).save(any());
         verify(lotRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
     }
 
     @Test
-    void acceptBid_whenLotRepositoryThrowsException_shouldThrowBusinessException() {
+    void acceptBid_whenLotRepositorySaveThrowsException_shouldThrowBusinessException() {
 
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
         when(lotRepository.save(any())).thenThrow(new RuntimeException());
 
         assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+    }
+
+    @Test
+    void acceptBid_whenLotRepositoryRejectLotCreatedBidsThrowsException_shouldThrowBusinessException() {
+
+        testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        doThrow(new RuntimeException()).when(lotRepository).rejectLotCreatedBids(any());
+
+        assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
     }
 
     @Test
