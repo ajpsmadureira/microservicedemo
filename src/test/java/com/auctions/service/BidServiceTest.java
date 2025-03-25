@@ -124,7 +124,7 @@ class BidServiceTest {
     }
 
     @Test
-    void deleteBid_whenNoJpaException_shouldNotThrowBusinessException() {
+    void deleteBid_whenAllConditionsExist_shouldDeleteBid() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
@@ -134,7 +134,7 @@ class BidServiceTest {
     }
 
     @Test
-    void deleteBid_whenJpaException_shouldThrowBusinessException() {
+    void deleteBid_whenDeleteFails_shouldThrowBusinessException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
@@ -154,11 +154,32 @@ class BidServiceTest {
     }
 
     @Test
+    void deleteBid_whenBidDoesNotExist_shouldReturnWithoutFurtherRepositoryActions() {
+
+        when(bidRepository.findById(any())).thenThrow(new ResourceNotFoundException());
+
+        bidService.deleteBid(1);
+
+        verify(bidRepository, times(0)).deleteById(1);
+    }
+
+    @Test
     void cancelBid_whenBidDoesNotExist_shouldThrowException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> bidService.cancelBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelBid_whenBidIsAlreadyCancelled_shouldReturnWithoutFurtherRepositoryActions() {
+
+        testBidEntity.setState(BidState.CANCELLED);
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
+        bidService.cancelBid(1);
 
         verify(bidRepository, times(0)).save(any());
     }
@@ -178,7 +199,7 @@ class BidServiceTest {
     }
 
     @Test
-    void cancelBid_whenBidIsNotInCreatedState_shouldThrowBusinessException() {
+    void cancelBid_whenBidIsNotInCreatedOrCancelledState_shouldThrowBusinessException() {
 
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
@@ -193,6 +214,17 @@ class BidServiceTest {
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> bidService.acceptBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void acceptBid_whenBidIsAlreadyAccepted_shouldReturnWithoutFurtherRepositoryActions() {
+
+        testBidEntity.setState(BidState.ACCEPTED);
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+
+        bidService.acceptBid(1);
 
         verify(bidRepository, times(0)).save(any());
     }
@@ -224,9 +256,9 @@ class BidServiceTest {
     }
 
     @Test
-    void acceptBid_whenBidIsNotInCreatedState_shouldThrowBusinessException() {
+    void acceptBid_whenBidIsNotInCreatedOrAcceptedState_shouldThrowBusinessException() {
 
-        testBidEntity.setState(BidState.ACCEPTED);
+        testBidEntity.setState(BidState.CANCELLED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
         assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 

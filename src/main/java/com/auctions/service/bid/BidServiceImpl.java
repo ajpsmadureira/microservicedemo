@@ -70,7 +70,16 @@ public class BidServiceImpl implements BidService {
     @Transactional
     public void deleteBid(Integer id) {
 
-        BidEntity bidEntity = findByIdOrThrowException(id);
+        BidEntity bidEntity;
+
+        try {
+
+            bidEntity = findByIdOrThrowException(id);
+
+        } catch (ResourceNotFoundException e) {
+
+            return;
+        }
 
         if (bidEntity.getState() == BidState.ACCEPTED) {
 
@@ -91,6 +100,11 @@ public class BidServiceImpl implements BidService {
     public void cancelBid(Integer id) {
 
         BidEntity bidEntity = findByIdOrThrowException(id);
+
+        if (bidEntity.getState() == BidState.CANCELLED) {
+
+            return;
+        }
 
         if (bidEntity.getState() != BidState.CREATED) {
 
@@ -113,6 +127,11 @@ public class BidServiceImpl implements BidService {
     public void acceptBid(Integer id) {
 
         BidEntity bidEntity = findByIdOrThrowException(id);
+
+        if (bidEntity.getState() == BidState.ACCEPTED) {
+
+            return;
+        }
 
         if (bidEntity.getState() != BidState.CREATED) {
 
