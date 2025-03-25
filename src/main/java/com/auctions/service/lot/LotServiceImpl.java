@@ -146,7 +146,16 @@ public class LotServiceImpl implements LotService {
     @Transactional
     public void deleteLot(Integer id) {
 
-        LotEntity lotEntity = findLotByIdOrThrowException(id);
+        LotEntity lotEntity;
+
+        try {
+
+            lotEntity = findLotByIdOrThrowException(id);
+
+        } catch(ResourceNotFoundException e) {
+
+            return;
+        }
 
         try {
 
