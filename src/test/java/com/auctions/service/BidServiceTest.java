@@ -5,11 +5,12 @@ import com.auctions.exception.BusinessException;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.bid.BidEntityToBidMapper;
+import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.BidEntity;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.UserEntity;
+import com.auctions.persistence.repository.AuctionRepository;
 import com.auctions.persistence.repository.BidRepository;
-import com.auctions.persistence.repository.LotRepository;
 import com.auctions.persistence.repository.UserRepository;
 import com.auctions.service.bid.BidServiceImpl;
 import com.auctions.util.TestDataFactory;
@@ -36,7 +37,7 @@ class BidServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private LotRepository lotRepository;
+    private AuctionRepository auctionRepository;
 
     @Mock
     private BidRepository bidRepository;
@@ -51,7 +52,7 @@ class BidServiceTest {
 
     private UserEntity testUserEntity;
 
-    private LotEntity testLotEntity;
+    private AuctionEntity testAuctionEntity;
 
     private Bid testBid;
 
@@ -64,18 +65,21 @@ class BidServiceTest {
         testUserEntity = TestDataFactory.createTestUserEntity();
 
         Lot testLot = TestDataFactory.createTestLot(testUser);
-        testLotEntity = TestDataFactory.createTestLotEntity(testUserEntity);
+        LotEntity testLotEntity = TestDataFactory.createTestLotEntity(testUserEntity);
 
-        testBid = TestDataFactory.createTestBid(testUser, testLot);
-        testBidEntity = TestDataFactory.createTestBidEntity(testUserEntity, testLotEntity);
+        Auction testAuction = TestDataFactory.createTestAuction(testUser, testLot);
+        testAuctionEntity = TestDataFactory.createTestAuctionEntity(testUserEntity, testLotEntity);
+
+        testBid = TestDataFactory.createTestBid(testUser, testAuction);
+        testBidEntity = TestDataFactory.createTestBidEntity(testUserEntity, testAuctionEntity);
     }
 
     @Test
     void createBid_whenAllConditionsExist_shouldCreateBid() {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
-        testLotEntity.setState(LotState.AUCTIONED);
-        when(lotRepository.findById(any())).thenReturn(Optional.ofNullable(testLotEntity));
+        testAuctionEntity.setState(AuctionState.ONGOING);
+        when(auctionRepository.findById(any())).thenReturn(Optional.ofNullable(testAuctionEntity));
         when(bidRepository.save(any())).thenReturn(testBidEntity);
         when(bidEntityToBidMapper.map(any())).thenReturn(testBid);
 
@@ -86,7 +90,7 @@ class BidServiceTest {
         BidEntity bidEntityCaptured = bidEntityCaptor.getValue();
         assertEquals(testBid.getAmount(), testBidEntity.getAmount());
         assertEquals(testBid.getUntil(), testBidEntity.getUntil());
-        assertEquals(testLotEntity, bidEntityCaptured.getLot());
+        assertEquals(testAuctionEntity, bidEntityCaptured.getAuction());
         assertEquals(BidState.CREATED, bidEntityCaptured.getState());
         assertEquals(testUserEntity, bidEntityCaptured.getCreatedBy());
         assertEquals(testUserEntity, bidEntityCaptured.getLastModifiedBy());
@@ -105,20 +109,20 @@ class BidServiceTest {
     }
 
     @Test
-    void createBid_whenLotDoesNotExist_shouldThrowException() {
+    void createBid_whenAuctionDoesNotExist_shouldThrowException() {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
-        when(lotRepository.findById(any())).thenReturn(Optional.empty());
+        when(auctionRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> bidService.createBid(testBid, testUser));
     }
 
     @Test
-    void createBid_whenLotIsNotAuctioned_shouldThrowException() {
+    void createBid_whenAuctionIsNotOngoing_shouldThrowException() {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(testUserEntity));
-        testLotEntity.setState(LotState.CREATED);
-        when(lotRepository.findById(any())).thenReturn(Optional.ofNullable(testLotEntity));
+        testAuctionEntity.setState(AuctionState.CREATED);
+        when(auctionRepository.findById(any())).thenReturn(Optional.ofNullable(testAuctionEntity));
 
         assertThrows(InvalidParameterException.class, () -> bidService.createBid(testBid, testUser));
     }
@@ -213,7 +217,7 @@ class BidServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
     }
 
     @Test
@@ -225,7 +229,7 @@ class BidServiceTest {
         bidService.acceptBid(1);
 
         verify(bidRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
     }
 
     @Test
@@ -239,10 +243,11 @@ class BidServiceTest {
         verify(bidRepository).save(testBidEntity);
         assertEquals(BidState.ACCEPTED, testBidEntity.getState());
 
-        verify(lotRepository).save(testLotEntity);
-        assertEquals(LotState.CLOSED, testLotEntity.getState());
+        verify(auctionRepository).save(testAuctionEntity);
 
-        verify(lotRepository).rejectLotCreatedBids(testLotEntity.getId());
+        assertEquals(AuctionState.CLOSED, testAuctionEntity.getState());
+
+        verify(auctionRepository).rejectAuctionCreatedBids(testAuctionEntity.getId());
     }
 
     @Test
@@ -254,8 +259,8 @@ class BidServiceTest {
         assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+        verify(auctionRepository, times(0)).save(any());
+        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
     }
 
     @Test
@@ -266,22 +271,22 @@ class BidServiceTest {
         assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+        verify(auctionRepository, times(0)).save(any());
+        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
     }
 
     @Test
-    void acceptBid_whenLotIsNotInAuctionedAcceptedState_shouldThrowBusinessException() {
+    void acceptBid_whenAuctionIsNotOngoing_shouldThrowBusinessException() {
 
-        testBidEntity.getLot().setState(LotState.CREATED);
+        testBidEntity.getAuction().setState(AuctionState.CREATED);
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
         assertThrows(InvalidParameterException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+        verify(auctionRepository, times(0)).save(any());
+        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
     }
 
     @Test
@@ -289,12 +294,12 @@ class BidServiceTest {
 
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        when(lotRepository.save(any())).thenThrow(new RuntimeException());
+        when(auctionRepository.save(any())).thenThrow(new RuntimeException());
 
         assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(lotRepository, times(0)).rejectLotCreatedBids(any());
+        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
     }
 
     @Test
@@ -302,7 +307,7 @@ class BidServiceTest {
 
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        doThrow(new RuntimeException()).when(lotRepository).rejectLotCreatedBids(any());
+        doThrow(new RuntimeException()).when(auctionRepository).rejectAuctionCreatedBids(any());
 
         assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
 

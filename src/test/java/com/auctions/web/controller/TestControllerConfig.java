@@ -1,6 +1,11 @@
 package com.auctions.web.controller;
 
 import com.auctions.config.SecurityConfig;
+import com.auctions.mapper.auction.AuctionCreateRequestToAuctionMapper;
+import com.auctions.mapper.auction.AuctionToAuctionResponseMapper;
+import com.auctions.mapper.auction.AuctionUpdateRequestToAuctionMapper;
+import com.auctions.mapper.bid.BidCreateRequestToBidMapper;
+import com.auctions.mapper.bid.BidToBidResponseMapper;
 import com.auctions.mapper.lot.*;
 import com.auctions.mapper.user.UserCreateRequestToUserMapper;
 import com.auctions.mapper.user.UserToUserResponseMapper;
@@ -85,5 +90,23 @@ public class TestControllerConfig {
     public BidToBidResponseMapper bidToBidResponseMapper() {
 
         return new BidToBidResponseMapper();
+    }
+
+    @Bean
+    public AuctionCreateRequestToAuctionMapper auctionCreateRequestToAuctionMapper() {
+
+        return new AuctionCreateRequestToAuctionMapper();
+    }
+
+    @Bean
+    public AuctionUpdateRequestToAuctionMapper auctionUpdateRequestToAuctionMapper() {
+
+        return new AuctionUpdateRequestToAuctionMapper();
+    }
+
+    @Bean
+    public AuctionToAuctionResponseMapper auctionToAuctionResponseMapper() {
+
+        return new AuctionToAuctionResponseMapper();
     }
 } 

@@ -1,4 +1,4 @@
-package com.auctions.mapper.lot;
+package com.auctions.mapper.bid;
 
 import com.auctions.domain.Bid;
 import com.auctions.mapper.Mapper;
@@ -12,7 +12,7 @@ public class BidCreateRequestToBidMapper implements Mapper<BidCreateRequest, Bid
     public Bid map(BidCreateRequest bidCreateRequest) {
 
         return Bid.builder()
-                .lotId(bidCreateRequest.getLotId())
+                .auctionId(bidCreateRequest.getAuctionId())
                 .amount(bidCreateRequest.getAmount())
                 .until(bidCreateRequest.getUntil())
                 .build();

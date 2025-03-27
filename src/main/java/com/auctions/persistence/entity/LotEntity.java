@@ -47,7 +47,7 @@ public class LotEntity {
 
     @OneToMany
     @JoinColumn(name = "lot")
-    private List<BidEntity> bids = new ArrayList<>();
+    private List<AuctionEntity> auctions = new ArrayList<>();
 
     @PrePersist
     protected void onPersist() {

@@ -1,10 +1,10 @@
 package com.auctions.mapper.bid;
 
+import com.auctions.domain.Auction;
 import com.auctions.domain.Bid;
-import com.auctions.domain.Lot;
 import com.auctions.domain.User;
 import com.auctions.mapper.Mapper;
-import com.auctions.mapper.lot.LotEntityToLotMapper;
+import com.auctions.mapper.auction.AuctionEntityToAuctionMapper;
 import com.auctions.mapper.user.UserEntityToUserMapper;
 import com.auctions.persistence.entity.BidEntity;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class BidEntityToBidMapper implements Mapper<BidEntity, Bid> {
 
     private final UserEntityToUserMapper userEntityToUserMapper;
-    private final LotEntityToLotMapper lotEntityToLotMapper;
+    private final AuctionEntityToAuctionMapper auctionEntityToAuctionMapper;
 
     @Override
     public Bid map(BidEntity bidEntity) {
@@ -26,7 +26,7 @@ public class BidEntityToBidMapper implements Mapper<BidEntity, Bid> {
                 .id(bidEntity.getId())
                 .amount(bidEntity.getAmount())
                 .until(bidEntity.getUntil())
-                .lotId(getLotId(bidEntity))
+                .auctionId(getAuctionId(bidEntity))
                 .createdByUserId(getCreatedById(bidEntity))
                 .lastModifiedByUserId(getLastModifiedById(bidEntity))
                 .build();
@@ -50,12 +50,12 @@ public class BidEntityToBidMapper implements Mapper<BidEntity, Bid> {
                 .orElse(null);
     }
 
-    private Integer getLotId(BidEntity bidEntity) {
+    private Integer getAuctionId(BidEntity bidEntity) {
 
         return Optional.ofNullable(bidEntity)
-                .map(BidEntity::getLot)
-                .map(lotEntityToLotMapper::map)
-                .map(Lot::getId)
+                .map(BidEntity::getAuction)
+                .map(auctionEntityToAuctionMapper::map)
+                .map(Auction::getId)
                 .orElse(null);
     }
 }

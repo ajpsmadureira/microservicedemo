@@ -10,7 +10,7 @@ CREATE TABLE users
    updated_at           TIMESTAMPTZ NOT NULL
 );
 
-CREATE TYPE LOT_STATE AS ENUM ('CREATED', 'CANCELLED', 'AUCTIONED', 'CLOSED');
+CREATE TYPE LOT_STATE AS ENUM ('CREATED', 'AUCTIONED');
 
 CREATE CAST (character varying AS LOT_STATE) with inout as assignment;
 
@@ -27,6 +27,23 @@ CREATE TABLE lots
    updated_at           TIMESTAMPTZ NOT NULL
 );
 
+CREATE TYPE AUCTION_STATE AS ENUM ('CREATED', 'CANCELLED', 'ONGOING', 'CLOSED');
+
+CREATE CAST (character varying AS AUCTION_STATE) with inout as assignment;
+
+CREATE TABLE auctions
+(
+   id                   SERIAL PRIMARY KEY,
+   state                AUCTION_STATE NOT NULL,
+   start_time           TIMESTAMPTZ,
+   stop_time            TIMESTAMPTZ,
+   lot                  SERIAL references lots NOT NULL,
+   created_by           SERIAL references users NOT NULL,
+   last_modified_by     SERIAL references users NOT NULL,
+   created_at           TIMESTAMPTZ NOT NULL,
+   updated_at           TIMESTAMPTZ NOT NULL
+);
+
 CREATE TYPE BID_STATE AS ENUM ('CREATED', 'CANCELLED', 'ACCEPTED', 'OUTDATED', 'REJECTED');
 
 CREATE CAST (character varying AS BID_STATE) with inout as assignment;
@@ -37,7 +54,7 @@ CREATE TABLE bids
    amount               DECIMAL NOT NULL,
    state                BID_STATE NOT NULL,
    until                TIMESTAMPTZ,
-   lot                  SERIAL references lots NOT NULL,
+   auction              SERIAL references auctions NOT NULL,
    created_by           SERIAL references users NOT NULL,
    last_modified_by     SERIAL references users NOT NULL,
    created_at           TIMESTAMPTZ NOT NULL,

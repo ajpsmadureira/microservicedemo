@@ -5,11 +5,11 @@ import com.auctions.exception.BusinessException;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.bid.BidEntityToBidMapper;
+import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.BidEntity;
-import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.UserEntity;
+import com.auctions.persistence.repository.AuctionRepository;
 import com.auctions.persistence.repository.BidRepository;
-import com.auctions.persistence.repository.LotRepository;
 import com.auctions.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import static java.time.Instant.now;
 public class BidServiceImpl implements BidService {
 
     private final UserRepository userRepository;
-    private final LotRepository lotRepository;
+    private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
     private final BidEntityToBidMapper bidEntityToBidMapper;
 
@@ -39,18 +39,18 @@ public class BidServiceImpl implements BidService {
             throw new BusinessException("Failed to create bid: " + e.getMessage());
         }
 
-        LotEntity lotEntity = findLotByIdOrThrowException(bid.getLotId());
+        AuctionEntity auctionEntity = findAuctionByIdOrThrowException(bid.getAuctionId());
 
-        if (lotEntity.getState() != LotState.AUCTIONED) {
+        if (auctionEntity.getState() != AuctionState.ONGOING) {
 
-            throw new InvalidParameterException("Lot is not being auctioned: " + lotEntity.getId());
+            throw new InvalidParameterException("Lot is not being auctioned: " + auctionEntity.getId());
         }
 
         BidEntity bidEntity = new BidEntity();
 
         bidEntity.setUntil(bid.getUntil());
         bidEntity.setAmount(bid.getAmount());
-        bidEntity.setLot(lotEntity);
+        bidEntity.setAuction(auctionEntity);
         bidEntity.setState(BidState.CREATED);
         bidEntity.setCreatedBy(currentUserEntity);
         bidEntity.setLastModifiedBy(currentUserEntity);
@@ -143,22 +143,22 @@ public class BidServiceImpl implements BidService {
             throw new InvalidParameterException("Bid is outdated. Bid is until " + bidEntity.getUntil());
         }
 
-        LotEntity lot = bidEntity.getLot();
+        AuctionEntity auction = bidEntity.getAuction();
 
-        if (lot.getState() != LotState.AUCTIONED) {
+        if (auction.getState() != AuctionState.ONGOING) {
 
-            throw new InvalidParameterException("Lot is not being auctioned. Its state is " + lot.getState());
+            throw new InvalidParameterException("Lot is not being auctioned. Its state is " + auction.getState());
         }
 
         try {
 
             bidEntity.setState(BidState.ACCEPTED);
 
-            lot.setState(LotState.CLOSED);
+            auction.setState(AuctionState.CLOSED);
 
-            lotRepository.save(lot);
+            auctionRepository.save(auction);
 
-            lotRepository.rejectLotCreatedBids(lot.getId());
+            auctionRepository.rejectAuctionCreatedBids(auction.getId());
 
             bidRepository.save(bidEntity);
 
@@ -173,9 +173,9 @@ public class BidServiceImpl implements BidService {
         return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find user with id: " + id));
     }
 
-    private LotEntity findLotByIdOrThrowException(Integer id) {
+    private AuctionEntity findAuctionByIdOrThrowException(Integer id) {
 
-        return lotRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find lot with id: " + id));
+        return auctionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find auction with id: " + id));
     }
 
     private BidEntity findByIdOrThrowException(Integer id) {

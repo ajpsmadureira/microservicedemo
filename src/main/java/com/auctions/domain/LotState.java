@@ -2,5 +2,5 @@ package com.auctions.domain;
 
 public enum LotState {
 
-    CREATED, CANCELLED, AUCTIONED, CLOSED;
+    CREATED, AUCTIONED;
 }

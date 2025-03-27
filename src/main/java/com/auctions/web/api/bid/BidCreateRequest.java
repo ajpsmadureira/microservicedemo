@@ -12,8 +12,8 @@ public class BidCreateRequest {
     @NotBlank(message = "Amount is required")
     private BigDecimal amount;
 
-    @NotBlank(message = "Lot id is required")
-    private Integer lotId;
+    @NotBlank(message = "Auction id is required")
+    private Integer auctionId;
 
     private final Instant until;
 } 

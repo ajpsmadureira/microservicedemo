@@ -1,4 +1,4 @@
-package com.auctions.mapper.lot;
+package com.auctions.mapper.bid;
 
 import com.auctions.domain.Bid;
 import com.auctions.mapper.Mapper;
@@ -14,7 +14,7 @@ public class BidToBidResponseMapper implements Mapper<Bid, BidResponse> {
         return BidResponse.builder()
                 .id(bid.getId())
                 .amount(bid.getAmount())
-                .lotId(bid.getLotId())
+                .auctionId(bid.getAuctionId())
                 .until(bid.getUntil())
                 .createdByUserId(bid.getCreatedByUserId())
                 .lastModifiedByUserId(bid.getLastModifiedByUserId())

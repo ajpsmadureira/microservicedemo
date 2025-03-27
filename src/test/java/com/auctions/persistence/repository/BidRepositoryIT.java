@@ -1,6 +1,7 @@
 package com.auctions.persistence.repository;
 
 import com.auctions.domain.BidState;
+import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.BidEntity;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.UserEntity;
@@ -24,6 +25,9 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
     private LotRepository lotRepository;
 
     @Autowired
+    private AuctionRepository auctionRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -42,7 +46,7 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
 
         assertEquals(bid.getAmount(), bidRetrieved.getAmount());
         assertEquals(BidState.CREATED, bidRetrieved.getState());
-        assertEquals(bid.getLot().getId(), bidRetrieved.getLot().getId());
+        assertEquals(bid.getAuction().getId(), bidRetrieved.getAuction().getId());
         assertEquals(bid.getCreatedBy().getId(), bidRetrieved.getCreatedBy().getId());
         assertEquals(bid.getLastModifiedBy().getId(), bidRetrieved.getLastModifiedBy().getId());
         assertNotNull(bidRetrieved.getUntil());
@@ -71,11 +75,11 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldThrowDataIntegrityViolationExceptionIfLotIsNull() {
+    public void shouldThrowDataIntegrityViolationExceptionIfAuctionIsNull() {
 
         BidEntity bid = getTestBidEntity();
 
-        bid.setLot(null);
+        bid.setAuction(null);
 
         assertThrows(DataIntegrityViolationException.class, () -> bidRepository.save(bid));
     }
@@ -159,21 +163,29 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
 
         LotEntity lotEntity = TestDataFactory.createTestLotEntity(userEntity);
 
-        BidEntity bid = TestDataFactory.createTestBidEntity(userEntity, lotEntity);
+        AuctionEntity auctionEntity = TestDataFactory.createTestAuctionEntity(userEntity, lotEntity);
+
+        BidEntity bid = TestDataFactory.createTestBidEntity(userEntity, auctionEntity);
 
         UserEntity user = bid.getCreatedBy();
         user.setId(null);
         UserEntity userSaved = userRepository.save(user);
 
-        LotEntity lot = bid.getLot();
-        lot.setId(null);
-        lot.setCreatedBy(userSaved);
-        lot.setLastModifiedBy(userSaved);
-        LotEntity lotSaved = lotRepository.save(lot);
+        lotEntity.setId(null);
+        lotEntity.setCreatedBy(userSaved);
+        lotEntity.setLastModifiedBy(userSaved);
+        LotEntity lotSaved = lotRepository.save(lotEntity);
+
+        AuctionEntity auction = bid.getAuction();
+        auction.setId(null);
+        auction.setLot(lotSaved);
+        auction.setCreatedBy(userSaved);
+        auction.setLastModifiedBy(userSaved);
+        AuctionEntity auctionSaved = auctionRepository.save(auction);
 
         bid.setCreatedBy(userSaved);
         bid.setLastModifiedBy(userSaved);
-        bid.setLot(lotSaved);
+        bid.setAuction(auctionSaved);
         bid.setId(null);
 
         return bid;

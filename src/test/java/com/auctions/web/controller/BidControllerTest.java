@@ -1,5 +1,6 @@
 package com.auctions.web.controller;
 
+import com.auctions.domain.Auction;
 import com.auctions.domain.Bid;
 import com.auctions.domain.Lot;
 import com.auctions.domain.User;
@@ -50,7 +51,9 @@ class BidControllerTest {
 
         Lot testLot = TestDataFactory.createTestLot(testUser);
 
-        testBid = TestDataFactory.createTestBid(testUser, testLot);
+        Auction testAuction = TestDataFactory.createTestAuction(testUser, testLot);
+
+        testBid = TestDataFactory.createTestBid(testUser, testAuction);
     }
 
     @Test
@@ -68,7 +71,7 @@ class BidControllerTest {
                 .andExpect(jsonPath("$.id").value(testBid.getId()))
                 .andExpect(jsonPath("$.amount").value(testBid.getAmount()))
                 .andExpect(jsonPath("$.until").value(testBid.getUntil().toString()))
-                .andExpect(jsonPath("$.lotId").value(testBid.getLotId()))
+                .andExpect(jsonPath("$.auctionId").value(testBid.getAuctionId()))
                 .andExpect(jsonPath("$.createdByUserId").value(testBid.getCreatedByUserId()))
                 .andExpect(jsonPath("$.lastModifiedByUserId").value(testBid.getLastModifiedByUserId()));
     }

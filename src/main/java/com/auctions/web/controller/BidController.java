@@ -1,7 +1,8 @@
 package com.auctions.web.controller;
 
 import com.auctions.exception.ControllerException;
-import com.auctions.mapper.lot.*;
+import com.auctions.mapper.bid.BidCreateRequestToBidMapper;
+import com.auctions.mapper.bid.BidToBidResponseMapper;
 import com.auctions.service.auth.AuthService;
 import com.auctions.service.bid.BidService;
 import com.auctions.web.api.bid.BidCreateRequest;
