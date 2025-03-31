@@ -128,46 +128,6 @@ class BidServiceTest {
     }
 
     @Test
-    void deleteBid_whenAllConditionsExist_shouldDeleteBid() {
-
-        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-
-        bidService.deleteBid(1);
-
-        verify(bidRepository).deleteById(1);
-    }
-
-    @Test
-    void deleteBid_whenDeleteFails_shouldThrowBusinessException() {
-
-        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-
-        doThrow(new RuntimeException()).when(bidRepository).deleteById(1);
-
-        assertThrows(BusinessException.class, () -> bidService.deleteBid(1));
-    }
-
-    @Test
-    void deleteBid_whenBidIsInAcceptedState_shouldThrowBusinessException() {
-
-        testBidEntity.setState(BidState.ACCEPTED);
-        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        assertThrows(InvalidParameterException.class, () -> bidService.deleteBid(1));
-
-        verify(bidRepository, times(0)).deleteById(1);
-    }
-
-    @Test
-    void deleteBid_whenBidDoesNotExist_shouldReturnWithoutFurtherRepositoryActions() {
-
-        when(bidRepository.findById(any())).thenThrow(new ResourceNotFoundException());
-
-        bidService.deleteBid(1);
-
-        verify(bidRepository, times(0)).deleteById(1);
-    }
-
-    @Test
     void cancelBid_whenBidDoesNotExist_shouldThrowException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());

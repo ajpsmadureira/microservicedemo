@@ -109,25 +109,4 @@ public class BidController {
 
         bidService.acceptBid(id);
     }
-
-    @Operation(summary = "Delete bid", description = "Delete a bid")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Bid successfully deleted"),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid input data or incorrect request format",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            ),
-            @ApiResponse(responseCode = "404", description = "Bid not found"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Internal server error",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            )
-    })
-    @DeleteMapping("/{id}")
-    public void deleteBid(@Parameter(description = "Bid ID", required = true) @PathVariable Integer id) {
-
-        bidService.deleteBid(id);
-    }
 }

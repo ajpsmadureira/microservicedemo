@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,12 +87,5 @@ class BidControllerTest {
     void cancelBid() throws Exception {
 
         mockMvc.perform(post("/api/bids/1/cancel")).andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    void deleteBid() throws Exception {
-
-        mockMvc.perform(delete("/api/bids/1")).andExpect(status().isOk());
     }
 } 

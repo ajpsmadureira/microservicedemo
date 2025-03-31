@@ -6,7 +6,6 @@ import com.auctions.domain.User;
 public interface BidService {
 
     Bid createBid(Bid bid, User currentUser);
-    void deleteBid(Integer id);
     void acceptBid(Integer id);
     void cancelBid(Integer id);
 }

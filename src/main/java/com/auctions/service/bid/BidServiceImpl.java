@@ -68,35 +68,6 @@ public class BidServiceImpl implements BidService {
     }
 
     @Transactional
-    public void deleteBid(Integer id) {
-
-        BidEntity bidEntity;
-
-        try {
-
-            bidEntity = findByIdOrThrowException(id);
-
-        } catch (ResourceNotFoundException e) {
-
-            return;
-        }
-
-        if (bidEntity.getState() == BidState.ACCEPTED) {
-
-            throw new InvalidParameterException("An accepted bid cannot be deleted: " + bidEntity.getId());
-        }
-
-        try {
-
-            bidRepository.deleteById(id);
-
-        } catch (Exception e) {
-
-            throw new BusinessException("Failed to delete bid: " + e.getMessage());
-        }
-    }
-
-    @Transactional
     public void cancelBid(Integer id) {
 
         BidEntity bidEntity = findByIdOrThrowException(id);
