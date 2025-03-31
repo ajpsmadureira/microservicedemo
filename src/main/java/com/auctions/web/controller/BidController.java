@@ -68,6 +68,48 @@ public class BidController {
                 .orElseThrow(ControllerException::new), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Cancel bid", description = "Cancel a bid")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bid successfully cancelled"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data or incorrect request format",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Bid not found"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PostMapping("/{id}/cancel")
+    public void cancelBid(@Parameter(description = "Bid ID", required = true) @PathVariable Integer id) {
+
+        bidService.cancelBid(id);
+    }
+
+    @Operation(summary = "Accept bid", description = "Accept a bid")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bid successfully accepted"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data or incorrect request format",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Bid not found"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PostMapping("/{id}/accept")
+    public void acceptBid(@Parameter(description = "Bid ID", required = true) @PathVariable Integer id) {
+
+        bidService.acceptBid(id);
+    }
+
     @Operation(summary = "Delete bid", description = "Delete a bid")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Bid successfully deleted"),

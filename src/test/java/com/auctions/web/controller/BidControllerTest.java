@@ -78,6 +78,20 @@ class BidControllerTest {
 
     @Test
     @WithMockUser
+    void acceptBid() throws Exception {
+
+        mockMvc.perform(post("/api/bids/1/accept")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void cancelBid() throws Exception {
+
+        mockMvc.perform(post("/api/bids/1/cancel")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
     void deleteBid() throws Exception {
 
         mockMvc.perform(delete("/api/bids/1")).andExpect(status().isOk());
