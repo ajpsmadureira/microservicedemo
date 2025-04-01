@@ -28,5 +28,5 @@ management:
       show-details: never
 
 springdoc:
-  packages-to-scan: com.crm.web.controller
+  packages-to-scan: com.auctions.web.controller
   paths-to-match: /api/**

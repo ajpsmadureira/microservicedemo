@@ -145,4 +145,15 @@ public class AuctionController {
 
         auctionService.deleteAuction(id);
     }
+
+    @Operation(summary = "Start auction", description = "Starts an auction")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Auction successfully started"),
+            @ApiResponse(responseCode = "404", description = "Auction not found")
+    })
+    @PostMapping("/{id}/start")
+    public void startAuction(@Parameter(description = "Auction ID", required = true) @PathVariable Integer id) {
+
+        auctionService.startAuction(id);
+    }
 }

@@ -4,6 +4,7 @@ import com.auctions.domain.Auction;
 import com.auctions.domain.AuctionState;
 import com.auctions.domain.User;
 import com.auctions.exception.BusinessException;
+import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.auction.AuctionEntityToAuctionMapper;
 import com.auctions.persistence.entity.AuctionEntity;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Instant.now;
+
 @Service
 @RequiredArgsConstructor
 public class AuctionServiceImpl implements AuctionService {
@@ -28,6 +31,7 @@ public class AuctionServiceImpl implements AuctionService {
     private final LotRepository lotRepository;
     private final AuctionEntityToAuctionMapper auctionEntityToAuctionMapper;
 
+    @Override
     public List<Auction> getAllAuctions() {
 
         return auctionRepository
@@ -37,6 +41,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .toList();
     }
 
+    @Override
     public Auction getAuctionById(Integer id) {
 
         return auctionRepository.findById(id)
@@ -44,6 +49,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Auction not found with id: " + id));
     }
 
+    @Override
     @Transactional
     public Auction createAuction(Auction auction, User currentUser) {
 
@@ -80,6 +86,7 @@ public class AuctionServiceImpl implements AuctionService {
         }
     }
 
+    @Override
     @Transactional
     public Auction updateAuctionDetails(Integer id, Auction auction, User currentUser) {
 
@@ -105,14 +112,49 @@ public class AuctionServiceImpl implements AuctionService {
         }
     }
 
+    @Override
     @Transactional
-    public void deleteAuction(Integer id) {
+    public void startAuction(Integer id) {
 
-        AuctionEntity auctionEntity;
+        AuctionEntity auctionEntity = findAuctionByIdOrThrowException(id);
+
+        if (auctionEntity.getState() == AuctionState.ONGOING) {
+
+            return;
+        }
+
+        if (auctionEntity.getState() != AuctionState.CREATED) {
+
+            throw new InvalidParameterException("Auction is in wrong state to be started: " + auctionEntity.getState());
+        }
+
+        Optional.ofNullable(auctionEntity.getStopTime()).ifPresent(stopTime -> {
+            if (stopTime.isBefore(now())) throw new InvalidParameterException("Auction has already stopped at: " + stopTime);
+        });
 
         try {
 
-            auctionEntity = findAuctionByIdOrThrowException(id);
+            auctionEntity.setStartTime(now());
+
+            auctionEntity.setState(AuctionState.ONGOING);
+
+            // TODO: handle stop time
+
+            auctionRepository.save(auctionEntity);
+
+        } catch (Exception e) {
+
+            throw new BusinessException("Failed to start auction: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteAuction(Integer id) {
+
+        try {
+
+            findAuctionByIdOrThrowException(id);
 
         } catch(ResourceNotFoundException e) {
 
