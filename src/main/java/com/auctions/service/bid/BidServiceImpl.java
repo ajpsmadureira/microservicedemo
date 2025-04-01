@@ -118,7 +118,7 @@ public class BidServiceImpl implements BidService {
 
         if (auction.getState() != AuctionState.ONGOING) {
 
-            throw new InvalidParameterException("Lot is not being auctioned. Its state is " + auction.getState());
+            throw new InvalidParameterException("Auction is not ongoing. Its state is " + auction.getState());
         }
 
         try {
