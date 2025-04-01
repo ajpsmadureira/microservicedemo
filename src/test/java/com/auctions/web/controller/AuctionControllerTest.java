@@ -58,7 +58,7 @@ class AuctionControllerTest {
 
     @Test
     @WithMockUser
-    void getAllLots_whenAuthenticated_shouldReturnLots() throws Exception {
+    void getAllAuctions_whenAuthenticated_shouldReturnAuctions() throws Exception {
 
         when(auctionService.getAllAuctions()).thenReturn(Collections.singletonList(testAuction));
 

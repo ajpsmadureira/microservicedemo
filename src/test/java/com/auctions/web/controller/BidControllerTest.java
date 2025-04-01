@@ -18,8 +18,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +56,45 @@ class BidControllerTest {
         Auction testAuction = TestDataFactory.createTestAuction(testUser, testLot);
 
         testBid = TestDataFactory.createTestBid(testUser, testAuction);
+    }
+
+    @Test
+    @WithMockUser
+    void getAllBids_whenAuthenticated_shouldReturnLots() throws Exception {
+
+        when(bidService.getAllBids()).thenReturn(Collections.singletonList(testBid));
+
+        mockMvc.perform(get("/api/bids"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(testBid.getId()))
+                .andExpect(jsonPath("$[0].amount").value(testBid.getAmount()))
+                .andExpect(jsonPath("$[0].until").value(testBid.getUntil().toString()))
+                .andExpect(jsonPath("$[0].auctionId").value(testBid.getAuctionId()))
+                .andExpect(jsonPath("$[0].createdByUserId").value(testBid.getCreatedByUserId()))
+                .andExpect(jsonPath("$[0].lastModifiedByUserId").value(testBid.getLastModifiedByUserId()));
+    }
+
+    @Test
+    void getAllBids_whenNotAuthenticated_shouldReturnUnauthorized() throws Exception {
+
+        mockMvc.perform(get("/api/bids"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void getBidById_whenBidExists_shouldReturnBid() throws Exception {
+
+        when(bidService.getBidById(1)).thenReturn(testBid);
+
+        mockMvc.perform(get("/api/bids/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(testBid.getId()))
+                .andExpect(jsonPath("$.amount").value(testBid.getAmount()))
+                .andExpect(jsonPath("$.until").value(testBid.getUntil().toString()))
+                .andExpect(jsonPath("$.auctionId").value(testBid.getAuctionId()))
+                .andExpect(jsonPath("$.createdByUserId").value(testBid.getCreatedByUserId()))
+                .andExpect(jsonPath("$.lastModifiedByUserId").value(testBid.getLastModifiedByUserId()));
     }
 
     @Test

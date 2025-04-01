@@ -10,6 +10,7 @@ import com.auctions.web.api.bid.BidResponse;
 import com.auctions.web.api.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,6 +40,46 @@ public class BidController {
     private final AuthService authService;
     private final BidCreateRequestToBidMapper bidCreateRequestToBidMapper;
     private final BidToBidResponseMapper bidToBidResponseMapper;
+
+    @Operation(summary = "Get all bids", description = "Retrieve a list of all bids in the system")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved bids",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BidResponse.class)))
+            )
+    })
+    @GetMapping
+    public List<BidResponse> getAllBids() {
+
+        return bidService
+                .getAllBids()
+                .stream()
+                .map(bidToBidResponseMapper::map)
+                .toList();
+    }
+
+    @Operation(summary = "Get bid by ID", description = "Retrieve a specific bid by ID")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved bid",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = BidResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Bid not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping("/{id}")
+    public BidResponse getBidById(@Parameter(description = "Bid ID", required = true) @PathVariable Integer id) {
+
+        return Optional.of(id)
+                .map(bidService::getBidById)
+                .map(bidToBidResponseMapper::map)
+                .orElseThrow(ControllerException::new);
+    }
 
     @Operation(summary = "Create new bid", description = "Create a new bid")
     @ApiResponses({

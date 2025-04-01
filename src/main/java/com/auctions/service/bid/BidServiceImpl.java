@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static java.time.Instant.now;
 
 @Service
@@ -25,6 +27,24 @@ public class BidServiceImpl implements BidService {
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
     private final BidEntityToBidMapper bidEntityToBidMapper;
+
+    @Override
+    public List<Bid> getAllBids() {
+
+        return bidRepository
+                .findAll()
+                .stream()
+                .map(bidEntityToBidMapper::map)
+                .toList();
+    }
+
+    @Override
+    public Bid getBidById(Integer id) {
+
+        return bidRepository.findById(id)
+                .map(bidEntityToBidMapper::map)
+                .orElseThrow(() -> new ResourceNotFoundException("Bid not found with id: " + id));
+    }
 
     @Transactional
     public Bid createBid(Bid bid, User currentUser) {

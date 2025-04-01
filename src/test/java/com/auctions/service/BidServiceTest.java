@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.Instant.now;
@@ -72,6 +73,40 @@ class BidServiceTest {
 
         testBid = TestDataFactory.createTestBid(testUser, testAuction);
         testBidEntity = TestDataFactory.createTestBidEntity(testUserEntity, testAuctionEntity);
+    }
+
+    @Test
+    void getAllBids_whenAllConditionsExist_shouldReturnBids() {
+
+        when(bidRepository.findAll()).thenReturn(List.of(testBidEntity));
+        when(bidEntityToBidMapper.map(any())).thenReturn(testBid);
+
+        List<Bid> bids = bidService.getAllBids();
+
+        verify(bidEntityToBidMapper).map(testBidEntity);
+        assertEquals(1, bids.size());
+        assertEquals(testBid, bids.get(0));
+    }
+
+    @Test
+    void getBidById_whenAllConditionsExist_shouldReturnBid() {
+
+        when(bidRepository.findById(any())).thenReturn(Optional.of(testBidEntity));
+        when(bidEntityToBidMapper.map(any())).thenReturn(testBid);
+
+        assertEquals(testBid, bidService.getBidById(1));
+
+        verify(bidEntityToBidMapper).map(testBidEntity);
+    }
+
+    @Test
+    void getBidById_whenBidNotFound_shouldThrowException() {
+
+        when(bidRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> bidService.getBidById(1));
+
+        verify(bidEntityToBidMapper, times(0)).map(any());
     }
 
     @Test
