@@ -14,4 +14,6 @@ public interface AuctionService {
     void startAuction(Integer id);
     void cancelAuction(Integer id);
     void deleteAuction(Integer id);
+
+    // An auction is stopped by accepting a bid; thus, no direct stop auction is required.
 }

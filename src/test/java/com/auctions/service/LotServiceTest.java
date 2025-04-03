@@ -114,7 +114,6 @@ public class LotServiceTest {
         LotEntity lotEntityCaptured = lotEntityCaptor.getValue();
         assertEquals(testLot.getName(), lotEntityCaptured.getName());
         assertEquals(testLot.getSurname(), lotEntityCaptured.getSurname());
-        assertEquals(LotState.CREATED, lotEntityCaptured.getState());
         assertEquals(testUserEntity, lotEntityCaptured.getCreatedBy());
         assertEquals(testUserEntity, lotEntityCaptured.getLastModifiedBy());
 

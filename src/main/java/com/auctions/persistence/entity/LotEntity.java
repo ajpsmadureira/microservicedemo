@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.auctions.domain.LotState;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,9 +26,6 @@ public class LotEntity {
 
     @Column(name = "photo_url")
     private String photoUrl;
-
-    @Enumerated(EnumType.STRING)
-    private LotState state;
 
     @ManyToOne
     @JoinColumn(name = "created_by")

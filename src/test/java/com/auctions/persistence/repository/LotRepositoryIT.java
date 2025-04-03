@@ -1,6 +1,5 @@
 package com.auctions.persistence.repository;
 
-import com.auctions.domain.LotState;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.UserEntity;
 import com.auctions.util.TestDataFactory;
@@ -38,7 +37,6 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
         assertEquals(lotSaved.getName(), lotRetrieved.getName());
         assertEquals(lotSaved.getSurname(), lotRetrieved.getSurname());
         assertEquals(lotSaved.getPhotoUrl(), lotRetrieved.getPhotoUrl());
-        assertEquals(LotState.AUCTIONED, lotRetrieved.getState());
         assertEquals(lot.getCreatedBy().getId(), lotRetrieved.getCreatedBy().getId());
         assertEquals(lot.getLastModifiedBy().getId(), lotRetrieved.getLastModifiedBy().getId());
         assertNotNull(lotRetrieved.getCreatedAt());
@@ -61,16 +59,6 @@ public class LotRepositoryIT extends AbstractRepositoryIT {
         LotEntity lot = getTestLotEntity();
 
         lot.setSurname(null);
-
-        assertThrows(DataIntegrityViolationException.class, () -> lotRepository.save(lot));
-    }
-
-    @Test
-    public void shouldThrowDataIntegrityViolationExceptionIfStateIsNull() {
-
-        LotEntity lot = getTestLotEntity();
-
-        lot.setState(null);
 
         assertThrows(DataIntegrityViolationException.class, () -> lotRepository.save(lot));
     }

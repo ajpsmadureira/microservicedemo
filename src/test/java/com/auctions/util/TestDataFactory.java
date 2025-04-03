@@ -86,7 +86,6 @@ public class TestDataFactory {
         lotEntity.setName(LOT_USERNAME);
         lotEntity.setSurname(LOT_SURNAME);
         lotEntity.setPhotoUrl(LOT_PHOTO_URL);
-        lotEntity.setState(LotState.AUCTIONED);
         lotEntity.setCreatedBy(userEntity);
         lotEntity.setLastModifiedBy(userEntity);
         lotEntity.setCreatedAt(LOT_TIMESTAMP);

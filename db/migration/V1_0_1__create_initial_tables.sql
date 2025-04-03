@@ -10,17 +10,12 @@ CREATE TABLE users
    updated_at           TIMESTAMPTZ NOT NULL
 );
 
-CREATE TYPE LOT_STATE AS ENUM ('CREATED', 'AUCTIONED');
-
-CREATE CAST (character varying AS LOT_STATE) with inout as assignment;
-
 CREATE TABLE lots
 (
    id                   SERIAL PRIMARY KEY,
    name                 VARCHAR(200) NOT NULL,
    surname              VARCHAR(200) NOT NULL,
    photo_url            VARCHAR(200),
-   state                LOT_STATE NOT NULL,
    created_by           SERIAL references users NOT NULL,
    last_modified_by     SERIAL references users NOT NULL,
    created_at           TIMESTAMPTZ NOT NULL,

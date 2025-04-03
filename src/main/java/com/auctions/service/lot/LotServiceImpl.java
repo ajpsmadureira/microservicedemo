@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.auctions.domain.Lot;
-import com.auctions.domain.LotState;
 import com.auctions.domain.User;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.mapper.lot.LotEntityToLotMapper;
@@ -58,7 +57,6 @@ public class LotServiceImpl implements LotService {
         lotEntity.setSurname(lot.getSurname());
         lotEntity.setCreatedBy(currentUserEntity);
         lotEntity.setLastModifiedBy(currentUserEntity);
-        lotEntity.setState(LotState.CREATED);
 
         try {
 
