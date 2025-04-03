@@ -149,7 +149,7 @@ public class BidServiceImpl implements BidService {
 
             auctionRepository.save(auction);
 
-            auctionRepository.rejectAuctionCreatedBids(auction.getId());
+            auctionRepository.updateAuctionCreatedBidsState(BidState.REJECTED, auction.getId());
 
             bidRepository.save(bidEntity);
 

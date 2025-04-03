@@ -146,4 +146,11 @@ class AuctionControllerTest {
         mockMvc.perform(post("/api/auctions/1/start"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser
+    void cancelAuction() throws Exception {
+        mockMvc.perform(post("/api/auctions/1/cancel"))
+                .andExpect(status().isOk());
+    }
 }

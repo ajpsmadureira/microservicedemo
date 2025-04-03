@@ -12,5 +12,6 @@ public interface AuctionService {
     Auction createAuction(Auction auction, User currentUser);
     Auction updateAuctionDetails(Integer id, Auction auction, User currentUser);
     void startAuction(Integer id);
+    void cancelAuction(Integer id);
     void deleteAuction(Integer id);
 }

@@ -170,7 +170,7 @@ public class AuctionRepositoryIT extends AbstractRepositoryIT {
         bidEntitySecond.setState(BidState.CREATED);
         BidEntity savedBidEntitySecond = bidRepository.save(bidEntitySecond);
 
-        auctionRepository.rejectAuctionCreatedBids(auctionSaved.getId());
+        auctionRepository.updateAuctionCreatedBidsState(BidState.REJECTED, auctionSaved.getId());
 
         entityManager.clear();
 
@@ -191,7 +191,7 @@ public class AuctionRepositoryIT extends AbstractRepositoryIT {
         bidEntityCancelled.setState(BidState.CANCELLED);
         BidEntity savedBidEntityCancelled = bidRepository.save(bidEntityCancelled);
 
-        auctionRepository.rejectAuctionCreatedBids(auctionSaved.getId());
+        auctionRepository.updateAuctionCreatedBidsState(BidState.REJECTED, auctionSaved.getId());
 
         entityManager.clear();
 

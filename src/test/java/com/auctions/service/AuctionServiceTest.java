@@ -1,9 +1,6 @@
 package com.auctions.service;
 
-import com.auctions.domain.Auction;
-import com.auctions.domain.AuctionState;
-import com.auctions.domain.Lot;
-import com.auctions.domain.User;
+import com.auctions.domain.*;
 import com.auctions.exception.BusinessException;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
@@ -344,5 +341,79 @@ public class AuctionServiceTest {
         doThrow(new RuntimeException()).when(auctionRepository).save(testAuctionEntity);
 
         assertThrows(BusinessException.class, () -> auctionService.startAuction(AUCTION_ID));
+    }
+
+    @Test
+    void cancelAuction_whenAllConditionsExist_shouldCancelAuction() {
+
+        testAuctionEntity.setState(AuctionState.CREATED);
+        testAuctionEntity.setId(AUCTION_ID);
+        testAuctionEntity.setStopTime(null);
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
+
+        auctionService.cancelAuction(AUCTION_ID);
+
+        ArgumentCaptor<AuctionEntity> auctionEntityCaptor = ArgumentCaptor.forClass(AuctionEntity.class);
+        verify(auctionRepository).save(auctionEntityCaptor.capture());
+        AuctionEntity auctionEntityCaptured = auctionEntityCaptor.getValue();
+        assertNotNull(auctionEntityCaptured.getStartTime());
+        assertEquals(AuctionState.CANCELLED, auctionEntityCaptured.getState());
+
+        verify(auctionRepository).updateAuctionCreatedBidsState(BidState.CANCELLED, AUCTION_ID);
+    }
+
+    @Test
+    void cancelAuction_whenAuctionIsUnknown_shouldThrowException() {
+
+        when(auctionRepository.findById(AUCTION_ID)).thenThrow(new ResourceNotFoundException());
+
+        assertThrows(ResourceNotFoundException.class, () -> auctionService.cancelAuction(AUCTION_ID));
+
+        verify(auctionRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelAuction_whenAuctionIsAlreadyCancelled_shouldSimplyReturn() {
+
+        testAuctionEntity.setState(AuctionState.CANCELLED);
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
+
+        auctionService.cancelAuction(AUCTION_ID);
+
+        verify(auctionRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelAuction_whenAuctionIsClosed_shouldThrowException() {
+
+        testAuctionEntity.setState(AuctionState.CLOSED);
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
+
+        assertThrows(InvalidParameterException.class, () -> auctionService.cancelAuction(AUCTION_ID));
+
+        verify(auctionRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelAuction_whenAuctionHasStopped_shouldThrowException() {
+
+        testAuctionEntity.setState(AuctionState.ONGOING);
+        testAuctionEntity.setStopTime(now().minus(1, ChronoUnit.MINUTES));
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
+
+        assertThrows(InvalidParameterException.class, () -> auctionService.cancelAuction(AUCTION_ID));
+
+        verify(auctionRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelAuction_whenRepositorySaveThrowsException_shouldThrowException() {
+
+        testAuctionEntity.setState(AuctionState.ONGOING);
+        testAuctionEntity.setStopTime(null);
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
+        doThrow(new RuntimeException()).when(auctionRepository).save(testAuctionEntity);
+
+        assertThrows(BusinessException.class, () -> auctionService.cancelAuction(AUCTION_ID));
     }
 }

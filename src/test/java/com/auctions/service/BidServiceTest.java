@@ -212,7 +212,7 @@ class BidServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
+        verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
     }
 
     @Test
@@ -224,7 +224,7 @@ class BidServiceTest {
         bidService.acceptBid(1);
 
         verify(bidRepository, times(0)).save(any());
-        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
+        verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
     }
 
     @Test
@@ -242,7 +242,7 @@ class BidServiceTest {
 
         assertEquals(AuctionState.CLOSED, testAuctionEntity.getState());
 
-        verify(auctionRepository).rejectAuctionCreatedBids(testAuctionEntity.getId());
+        verify(auctionRepository).updateAuctionCreatedBidsState(BidState.REJECTED, testAuctionEntity.getId());
     }
 
     @Test
@@ -255,7 +255,7 @@ class BidServiceTest {
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).save(any());
-        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
+        verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
     }
 
     @Test
@@ -267,7 +267,7 @@ class BidServiceTest {
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).save(any());
-        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
+        verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
     }
 
     @Test
@@ -281,7 +281,7 @@ class BidServiceTest {
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).save(any());
-        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
+        verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
     }
 
     @Test
@@ -294,7 +294,7 @@ class BidServiceTest {
         assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
-        verify(auctionRepository, times(0)).rejectAuctionCreatedBids(any());
+        verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
     }
 
     @Test
@@ -302,7 +302,7 @@ class BidServiceTest {
 
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        doThrow(new RuntimeException()).when(auctionRepository).rejectAuctionCreatedBids(any());
+        doThrow(new RuntimeException()).when(auctionRepository).updateAuctionCreatedBidsState(any(), any());
 
         assertThrows(BusinessException.class, () -> bidService.acceptBid(1));
 

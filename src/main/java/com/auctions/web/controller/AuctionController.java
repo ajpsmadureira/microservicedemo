@@ -156,4 +156,15 @@ public class AuctionController {
 
         auctionService.startAuction(id);
     }
+
+    @Operation(summary = "Cancel auction", description = "Cancels an auction")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Auction successfully cancelled"),
+            @ApiResponse(responseCode = "404", description = "Auction not found")
+    })
+    @PostMapping("/{id}/cancel")
+    public void cancelAuction(@Parameter(description = "Auction ID", required = true) @PathVariable Integer id) {
+
+        auctionService.cancelAuction(id);
+    }
 }

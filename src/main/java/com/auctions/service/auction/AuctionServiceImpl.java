@@ -2,6 +2,7 @@ package com.auctions.service.auction;
 
 import com.auctions.domain.Auction;
 import com.auctions.domain.AuctionState;
+import com.auctions.domain.BidState;
 import com.auctions.domain.User;
 import com.auctions.exception.BusinessException;
 import com.auctions.exception.InvalidParameterException;
@@ -145,6 +146,40 @@ public class AuctionServiceImpl implements AuctionService {
         } catch (Exception e) {
 
             throw new BusinessException("Failed to start auction: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void cancelAuction(Integer id) {
+
+        AuctionEntity auctionEntity = findAuctionByIdOrThrowException(id);
+
+        if (auctionEntity.getState() == AuctionState.CANCELLED) {
+
+            return;
+        }
+
+        if (auctionEntity.getState() == AuctionState.CLOSED) {
+
+            throw new InvalidParameterException("Auction has been closed, thus cannot be cancelled.");
+        }
+
+        Optional.ofNullable(auctionEntity.getStopTime()).ifPresent(stopTime -> {
+            if (stopTime.isBefore(now())) throw new InvalidParameterException("Auction has already stopped at: " + stopTime);
+        });
+
+        try {
+
+            auctionEntity.setState(AuctionState.CANCELLED);
+
+            auctionRepository.updateAuctionCreatedBidsState(BidState.CANCELLED, auctionEntity.getId());
+
+            auctionRepository.save(auctionEntity);
+
+        } catch (Exception e) {
+
+            throw new BusinessException("Failed to cancel auction: " + e.getMessage());
         }
     }
 
