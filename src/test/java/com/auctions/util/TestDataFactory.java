@@ -8,6 +8,9 @@ import com.auctions.persistence.entity.UserEntity;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
+import static java.time.Instant.now;
 
 public class TestDataFactory {
 
@@ -29,6 +32,7 @@ public class TestDataFactory {
 
     private static final BigDecimal BID_AMOUNT = BigDecimal.valueOf(100);
     private static final Instant BID_TIMESTAMP = Instant.ofEpochMilli(1739278311);
+    private static final Instant BID_UNTIL = now().plus(5, ChronoUnit.MINUTES);
     
     public static User createTestUser() {
 
@@ -127,7 +131,7 @@ public class TestDataFactory {
         return Bid.builder()
                 .id(1)
                 .amount(BID_AMOUNT)
-                .until(BID_TIMESTAMP)
+                .until(BID_UNTIL)
                 .state(BidState.CREATED)
                 .auctionId(auction.getId())
                 .createdByUserId(user.getId())
@@ -141,7 +145,7 @@ public class TestDataFactory {
 
         bidEntity.setAmount(BID_AMOUNT);
         bidEntity.setAuction(auctionEntity);
-        bidEntity.setUntil(BID_TIMESTAMP);
+        bidEntity.setUntil(BID_UNTIL);
         bidEntity.setState(BidState.CREATED);
         bidEntity.setCreatedBy(userEntity);
         bidEntity.setLastModifiedBy(userEntity);

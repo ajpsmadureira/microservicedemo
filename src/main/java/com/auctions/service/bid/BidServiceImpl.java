@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Instant.now;
 
@@ -101,6 +102,10 @@ public class BidServiceImpl implements BidService {
 
             throw new InvalidParameterException("Only bids in created state can be cancelled. Bid state is " + bidEntity.getState());
         }
+
+        Optional.ofNullable(bidEntity.getUntil()).ifPresent(until -> {
+            if (until.isBefore(now())) throw new InvalidParameterException("Bid has already stopped at: " + until);
+        });
 
         try {
 

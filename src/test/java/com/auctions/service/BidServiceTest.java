@@ -124,7 +124,7 @@ class BidServiceTest {
         verify(bidRepository).save(bidEntityCaptor.capture());
         BidEntity bidEntityCaptured = bidEntityCaptor.getValue();
         assertEquals(testBid.getAmount(), testBidEntity.getAmount());
-        assertEquals(testBid.getUntil(), testBidEntity.getUntil());
+        assertTrue(testBid.getUntil().equals(testBidEntity.getUntil()));
         assertEquals(testAuctionEntity, bidEntityCaptured.getAuction());
         assertEquals(BidState.CREATED, bidEntityCaptured.getState());
         assertEquals(testUserEntity, bidEntityCaptured.getCreatedBy());
@@ -198,6 +198,17 @@ class BidServiceTest {
     void cancelBid_whenBidIsNotInCreatedOrCancelledState_shouldThrowBusinessException() {
 
         testBidEntity.setState(BidState.ACCEPTED);
+        when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
+        assertThrows(InvalidParameterException.class, () -> bidService.cancelBid(1));
+
+        verify(bidRepository, times(0)).save(any());
+    }
+
+    @Test
+    void cancelBid_whenUntilHasAlreadyPassed_shouldThrowBusinessException() {
+
+        testBidEntity.setState(BidState.CREATED);
+        testBidEntity.setUntil(now().minus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
         assertThrows(InvalidParameterException.class, () -> bidService.cancelBid(1));
 
