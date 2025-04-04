@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.auctions.domain.Lot;
 import com.auctions.domain.User;
+import com.auctions.exception.InvalidParameterException;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.mapper.lot.LotEntityToLotMapper;
 import com.auctions.persistence.repository.UserRepository;
@@ -155,6 +156,11 @@ public class LotServiceImpl implements LotService {
         } catch(ResourceNotFoundException e) {
 
             return;
+        }
+
+        if (!lotEntity.getAuctions().isEmpty()) {
+
+            throw new InvalidParameterException("Lot has auctions associated to it so it cannot be deleted.");
         }
 
         try {

@@ -2,8 +2,10 @@ package com.auctions.service;
 
 import com.auctions.domain.*;
 import com.auctions.exception.BusinessException;
+import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.lot.LotEntityToLotMapper;
+import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.UserEntity;
 import com.auctions.persistence.repository.LotRepository;
@@ -31,6 +33,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class LotServiceTest {
 
+    private static final Integer LOT_ID = 1;
+
     @Mock
     private UserRepository userRepository;
 
@@ -50,6 +54,8 @@ public class LotServiceTest {
 
     private LotEntity testLotEntity;
 
+    private AuctionEntity testAuctionEntity;
+
     private UserEntity testUserEntity;
 
     private User testUser;
@@ -62,13 +68,15 @@ public class LotServiceTest {
 
         testLot = TestDataFactory.createTestLot(testUser);
         testLotEntity = TestDataFactory.createTestLotEntity(testUserEntity);
+
+        testAuctionEntity = TestDataFactory.createTestAuctionEntity(testUserEntity, testLotEntity);
     }
 
     @Test
     void getAllLots_whenAllConditionsExist_shouldReturnLots() {
 
         when(lotRepository.findAll()).thenReturn(List.of(testLotEntity));
-        when(lotEntityToLotMapper.map(any())).thenReturn(testLot);
+        when(lotEntityToLotMapper.map(testLotEntity)).thenReturn(testLot);
 
         List<Lot> lots = lotService.getAllLots();
 
@@ -80,10 +88,10 @@ public class LotServiceTest {
     @Test
     void getLotById_whenAllConditionsExist_shouldReturnLot() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
-        when(lotEntityToLotMapper.map(any())).thenReturn(testLot);
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
+        when(lotEntityToLotMapper.map(testLotEntity)).thenReturn(testLot);
 
-        assertEquals(testLot, lotService.getLotById(1));
+        assertEquals(testLot, lotService.getLotById(LOT_ID));
 
         verify(lotEntityToLotMapper).map(testLotEntity);
     }
@@ -91,19 +99,19 @@ public class LotServiceTest {
     @Test
     void getLotById_whenLotNotFound_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.empty());
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> lotService.getLotById(1));
+        assertThrows(ResourceNotFoundException.class, () -> lotService.getLotById(LOT_ID));
 
-        verify(lotEntityToLotMapper, times(0)).map(any());
+        verify(lotEntityToLotMapper, times(0)).map(testLotEntity);
     }
 
     @Test
     void createLot_whenAllConditionsExist_shouldCreateLot() {
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
         when(lotRepository.save(any())).thenReturn(testLotEntity);
-        when(lotEntityToLotMapper.map(any())).thenReturn(testLot);
+        when(lotEntityToLotMapper.map(testLotEntity)).thenReturn(testLot);
 
         Lot lot = lotService.createLot(testLot, testUser);
 
@@ -123,31 +131,31 @@ public class LotServiceTest {
     @Test
     void createLot_whenUserIsUnknown_shouldThrowException() {
 
-        when(userRepository.findById(any())).thenThrow(new BusinessException());
+        when(userRepository.findById(testUser.getId())).thenThrow(new BusinessException());
 
         assertThrows(BusinessException.class, () -> lotService.createLot(testLot, testUser));
 
-        verify(lotRepository, times(0)).save(any());
-        verify(lotEntityToLotMapper, times(0)).map(any());
+        verify(lotRepository, times(0)).save(testLotEntity);
+        verify(lotEntityToLotMapper, times(0)).map(testLotEntity);
     }
 
     @Test
     void createLot_whenSaveThrowsException_shouldThrowException() {
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
-        when(lotRepository.save(any())).thenThrow(new RuntimeException());
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
+        when(lotRepository.save(testLotEntity)).thenThrow(new RuntimeException());
 
         assertThrows(BusinessException.class, () -> lotService.createLot(testLot, testUser));
 
-        verify(lotEntityToLotMapper, times(0)).map(any());
+        verify(lotEntityToLotMapper, times(0)).map(testLotEntity);
     }
 
     @Test
     void createLot_whenMapThrowsException_shouldThrowException() {
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
         when(lotRepository.save(any())).thenReturn(testLotEntity);
-        when(lotEntityToLotMapper.map(any())).thenThrow(new RuntimeException());
+        when(lotEntityToLotMapper.map(testLotEntity)).thenThrow(new RuntimeException());
 
         assertThrows(BusinessException.class, () -> lotService.createLot(testLot, testUser));
     }
@@ -186,7 +194,7 @@ public class LotServiceTest {
     @Test
     void updateLotDetails_whenLotIsUnknown_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenThrow(new ResourceNotFoundException());
+        when(lotRepository.findById(LOT_ID)).thenThrow(new ResourceNotFoundException());
 
         assertThrows(ResourceNotFoundException.class, () -> lotService.updateLotDetails(1, testLot, testUser));
     }
@@ -194,8 +202,8 @@ public class LotServiceTest {
     @Test
     void updateLotDetails_whenUserIsUnknown_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
-        when(userRepository.findById(any())).thenThrow(new ResourceNotFoundException());
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
+        when(userRepository.findById(testUser.getId())).thenThrow(new ResourceNotFoundException());
 
         assertThrows(ResourceNotFoundException.class, () -> lotService.updateLotDetails(1, testLot, testUser));
     }
@@ -203,8 +211,8 @@ public class LotServiceTest {
     @Test
     void updateLotDetails_whenSaveThrowsException_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
-        when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
         when(lotRepository.save(testLotEntity)).thenThrow(new RuntimeException());
 
         assertThrows(BusinessException.class, () -> lotService.updateLotDetails(1, testLot, testUser));
@@ -213,8 +221,8 @@ public class LotServiceTest {
     @Test
     void updateLotDetails_whenMapThrowsException_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
-        when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
         when(lotRepository.save(testLotEntity)).thenReturn(testLotEntity);
         when(lotEntityToLotMapper.map(testLotEntity)).thenThrow(new RuntimeException());
 
@@ -226,7 +234,6 @@ public class LotServiceTest {
 
         final String OLD_PHOTO_URL = testLotEntity.getPhotoUrl();
         final String NEW_PHOTO_URL = "newPhotoUrl";
-        final Integer LOT_ID = 1;
         final Integer MODIFIED_BY = 2;
         final MultipartFile FILE = mock(MultipartFile.class);
 
@@ -252,7 +259,7 @@ public class LotServiceTest {
     @Test
     void updateLotPhoto_whenLotIsUnknown_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenThrow(new ResourceNotFoundException());
+        when(lotRepository.findById(LOT_ID)).thenThrow(new ResourceNotFoundException());
 
         assertThrows(ResourceNotFoundException.class, () -> lotService.updateLotPhoto(1, mock(MultipartFile.class), mock(User.class)));
     }
@@ -260,7 +267,7 @@ public class LotServiceTest {
     @Test
     void updateLotPhoto_whenFileStorageThrowsException_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
         when(fileStorageService.storeFile(any())).thenThrow(new ResourceNotFoundException());
 
         assertThrows(BusinessException.class, () -> lotService.updateLotPhoto(1, mock(MultipartFile.class), mock(User.class)));
@@ -269,9 +276,9 @@ public class LotServiceTest {
     @Test
     void updateLotPhoto_whenUserIsUnknown_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
         when(fileStorageService.storeFile(any())).thenReturn("newPhotoUrl");
-        when(userRepository.findById(any())).thenThrow(new ResourceNotFoundException());
+        when(userRepository.findById(testUser.getId())).thenThrow(new ResourceNotFoundException());
 
         assertThrows(BusinessException.class, () -> lotService.updateLotPhoto(1, mock(MultipartFile.class), mock(User.class)));
     }
@@ -279,9 +286,9 @@ public class LotServiceTest {
     @Test
     void updateLotPhoto_whenSaveThrowsException_shouldThrowException() {
 
-        when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
         when(fileStorageService.storeFile(any())).thenReturn("newPhotoUrl");
-        when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
         when(lotRepository.save(testLotEntity)).thenThrow(new RuntimeException());
 
         assertThrows(BusinessException.class, () -> lotService.updateLotPhoto(1, mock(MultipartFile.class), mock(User.class)));
@@ -307,8 +314,6 @@ public class LotServiceTest {
     @Test
     void deleteLot_whenAllConditionsExist_shouldDeleteLot() {
 
-        final Integer LOT_ID = 1;
-
         when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
 
         lotService.deleteLot(LOT_ID);
@@ -319,18 +324,27 @@ public class LotServiceTest {
     @Test
     void deleteLot_whenLotIsUnknown_shouldNotThrowException() {
 
-        when(lotRepository.findById(any())).thenThrow(new ResourceNotFoundException());
+        when(lotRepository.findById(LOT_ID)).thenThrow(new ResourceNotFoundException());
 
         lotService.deleteLot(1);
 
-        verify(lotRepository, times(0)).deleteById(any());
+        verify(lotRepository, times(0)).deleteById(LOT_ID);
+        verify(fileStorageService, times(0)).deleteFile(any());
+    }
+
+    @Test
+    void deleteLot_whenLotHasAuctions_shouldNotThrowException() {
+
+        testLotEntity.setAuctions(List.of(testAuctionEntity));
+        when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
+
+        assertThrows(InvalidParameterException.class, () -> lotService.deleteLot(LOT_ID));
+
         verify(fileStorageService, times(0)).deleteFile(any());
     }
 
     @Test
     void deleteLot_whenRepositoryDeletionThrowsException_shouldThrowException() {
-
-        final Integer LOT_ID = 1;
 
         when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
         doThrow(new RuntimeException()).when(lotRepository).deleteById(LOT_ID);
@@ -342,8 +356,6 @@ public class LotServiceTest {
 
     @Test
     void deleteLot_whenFileDeletionThrowsException_shouldThrowException() {
-
-        final Integer LOT_ID = 1;
 
         when(lotRepository.findById(LOT_ID)).thenReturn(Optional.of(testLotEntity));
         doThrow(new RuntimeException()).when(fileStorageService).deleteFile(testLotEntity.getPhotoUrl());
