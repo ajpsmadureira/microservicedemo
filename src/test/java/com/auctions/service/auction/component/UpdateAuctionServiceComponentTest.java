@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTest {
 
     @InjectMocks
-    private UpdateAuctionServiceComponent updateAuctionSubService;
+    private UpdateAuctionServiceComponent updateAuctionServiceComponent;
 
     @Test
     void updateAuctionDetails_whenAllConditionsExist_shouldUpdateAuctionDetails() {
@@ -50,7 +50,7 @@ public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTe
         actionBuilder.stopTime(now.plus(2, ChronoUnit.MINUTES));
         Auction updatedTestAuction = actionBuilder.build();
 
-        Auction auction = updateAuctionSubService.updateAuctionDetails(CREATED_BY, updatedTestAuction, newUser);
+        Auction auction = updateAuctionServiceComponent.updateAuctionDetails(CREATED_BY, updatedTestAuction, newUser);
 
         assertEquals(testAuction, auction);
 
@@ -68,7 +68,7 @@ public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTe
 
         when(auctionRepository.findById(any())).thenThrow(new ResourceNotFoundException());
 
-        assertThrows(ResourceNotFoundException.class, () -> updateAuctionSubService.updateAuctionDetails(1, testAuction, testUser));
+        assertThrows(ResourceNotFoundException.class, () -> updateAuctionServiceComponent.updateAuctionDetails(1, testAuction, testUser));
     }
 
     static Stream<Arguments> startTimeStopTimeStateScenarios() {
@@ -129,7 +129,7 @@ public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTe
         actionBuilder.stopTime(stopTime);
         Auction updatedTestAuction = actionBuilder.build();
 
-        InvalidParameterException invalidParameterException = assertThrows(InvalidParameterException.class, () -> updateAuctionSubService.updateAuctionDetails(CREATED_BY, updatedTestAuction, newUser));
+        InvalidParameterException invalidParameterException = assertThrows(InvalidParameterException.class, () -> updateAuctionServiceComponent.updateAuctionDetails(CREATED_BY, updatedTestAuction, newUser));
 
         assertEquals(expectedErrorMessage, invalidParameterException.getMessage());
     }
@@ -140,7 +140,7 @@ public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(auctionRepository.findById(any())).thenReturn(Optional.of(testAuctionEntity));
         when(userRepository.findById(any())).thenThrow(new ResourceNotFoundException());
 
-        assertThrows(ResourceNotFoundException.class, () -> updateAuctionSubService.updateAuctionDetails(1, testAuction, testUser));
+        assertThrows(ResourceNotFoundException.class, () -> updateAuctionServiceComponent.updateAuctionDetails(1, testAuction, testUser));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(userRepository.findById(any())).thenReturn(Optional.of(testUserEntity));
         when(auctionRepository.save(testAuctionEntity)).thenThrow(new RuntimeException());
 
-        assertThrows(BusinessException.class, () -> updateAuctionSubService.updateAuctionDetails(1, testAuction, testUser));
+        assertThrows(BusinessException.class, () -> updateAuctionServiceComponent.updateAuctionDetails(1, testAuction, testUser));
     }
 
     @Test
@@ -161,6 +161,6 @@ public class UpdateAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(auctionRepository.save(testAuctionEntity)).thenReturn(testAuctionEntity);
         when(auctionEntityToAuctionMapper.map(testAuctionEntity)).thenThrow(new RuntimeException());
 
-        assertThrows(BusinessException.class, () -> updateAuctionSubService.updateAuctionDetails(1, testAuction, testUser));
+        assertThrows(BusinessException.class, () -> updateAuctionServiceComponent.updateAuctionDetails(1, testAuction, testUser));
     }
 }

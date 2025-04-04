@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class StartAuctionServiceComponentTest extends AuctionServiceComponentTest {
 
     @InjectMocks
-    private StartAuctionServiceComponent startAuctionSubService;
+    private StartAuctionServiceComponent startAuctionServiceComponent;
 
     @Test
     void startAuction_whenAllConditionsExist_shouldStartAuction() {
@@ -29,7 +29,7 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
         testAuctionEntity.setStopTime(null);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        startAuctionSubService.startAuction(AUCTION_ID);
+        startAuctionServiceComponent.startAuction(AUCTION_ID);
 
         ArgumentCaptor<AuctionEntity> auctionEntityCaptor = ArgumentCaptor.forClass(AuctionEntity.class);
         verify(auctionRepository).save(auctionEntityCaptor.capture());
@@ -43,7 +43,7 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
 
         when(auctionRepository.findById(AUCTION_ID)).thenThrow(new ResourceNotFoundException());
 
-        assertThrows(ResourceNotFoundException.class, () -> startAuctionSubService.startAuction(AUCTION_ID));
+        assertThrows(ResourceNotFoundException.class, () -> startAuctionServiceComponent.startAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -54,7 +54,7 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
         testAuctionEntity.setState(AuctionState.ONGOING);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        startAuctionSubService.startAuction(AUCTION_ID);
+        startAuctionServiceComponent.startAuction(AUCTION_ID);
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -65,7 +65,7 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
         testAuctionEntity.setState(AuctionState.CANCELLED);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        assertThrows(InvalidParameterException.class, () -> startAuctionSubService.startAuction(AUCTION_ID));
+        assertThrows(InvalidParameterException.class, () -> startAuctionServiceComponent.startAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -76,7 +76,7 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
         testAuctionEntity.setState(AuctionState.CLOSED);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        assertThrows(InvalidParameterException.class, () -> startAuctionSubService.startAuction(AUCTION_ID));
+        assertThrows(InvalidParameterException.class, () -> startAuctionServiceComponent.startAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -88,7 +88,7 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
         testAuctionEntity.setStopTime(now().minus(1, ChronoUnit.MINUTES));
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        assertThrows(InvalidParameterException.class, () -> startAuctionSubService.startAuction(AUCTION_ID));
+        assertThrows(InvalidParameterException.class, () -> startAuctionServiceComponent.startAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -101,6 +101,6 @@ public class StartAuctionServiceComponentTest extends AuctionServiceComponentTes
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
         doThrow(new RuntimeException()).when(auctionRepository).save(testAuctionEntity);
 
-        assertThrows(BusinessException.class, () -> startAuctionSubService.startAuction(AUCTION_ID));
+        assertThrows(BusinessException.class, () -> startAuctionServiceComponent.startAuction(AUCTION_ID));
     }
 }

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class GetAuctionServiceComponentTest extends AuctionServiceComponentTest {
 
     @InjectMocks
-    private GetAuctionServiceComponent getAuctionSubService;
+    private GetAuctionServiceComponent getAuctionServiceComponent;
 
     @Test
     void getAllAuctions_whenAllConditionsExist_shouldReturnAuctions() {
@@ -24,7 +24,7 @@ public class GetAuctionServiceComponentTest extends AuctionServiceComponentTest 
         when(auctionRepository.findAll()).thenReturn(List.of(testAuctionEntity));
         when(auctionEntityToAuctionMapper.map(any())).thenReturn(testAuction);
 
-        List<Auction> auctions = getAuctionSubService.getAllAuctions();
+        List<Auction> auctions = getAuctionServiceComponent.getAllAuctions();
 
         verify(auctionEntityToAuctionMapper).map(testAuctionEntity);
         assertEquals(1, auctions.size());
@@ -37,7 +37,7 @@ public class GetAuctionServiceComponentTest extends AuctionServiceComponentTest 
         when(auctionRepository.findById(any())).thenReturn(Optional.of(testAuctionEntity));
         when(auctionEntityToAuctionMapper.map(any())).thenReturn(testAuction);
 
-        assertEquals(testAuction, getAuctionSubService.getAuctionById(1));
+        assertEquals(testAuction, getAuctionServiceComponent.getAuctionById(1));
 
         verify(auctionEntityToAuctionMapper).map(testAuctionEntity);
     }
@@ -47,7 +47,7 @@ public class GetAuctionServiceComponentTest extends AuctionServiceComponentTest 
 
         when(auctionRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> getAuctionSubService.getAuctionById(1));
+        assertThrows(ResourceNotFoundException.class, () -> getAuctionServiceComponent.getAuctionById(1));
 
         verify(auctionEntityToAuctionMapper, times(0)).map(any());
     }

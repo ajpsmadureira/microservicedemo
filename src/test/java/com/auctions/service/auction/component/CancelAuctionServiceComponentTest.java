@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTest {
 
     @InjectMocks
-    private CancelAuctionServiceComponent cancelAuctionSubService;
+    private CancelAuctionServiceComponent cancelAuctionServiceComponent;
 
     @Test
     void cancelAuction_whenAllConditionsExist_shouldCancelAuction() {
@@ -31,7 +31,7 @@ public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTe
         testAuctionEntity.setStopTime(null);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        cancelAuctionSubService.cancelAuction(AUCTION_ID);
+        cancelAuctionServiceComponent.cancelAuction(AUCTION_ID);
 
         ArgumentCaptor<AuctionEntity> auctionEntityCaptor = ArgumentCaptor.forClass(AuctionEntity.class);
         verify(auctionRepository).save(auctionEntityCaptor.capture());
@@ -47,7 +47,7 @@ public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTe
 
         when(auctionRepository.findById(AUCTION_ID)).thenThrow(new ResourceNotFoundException());
 
-        assertThrows(ResourceNotFoundException.class, () -> cancelAuctionSubService.cancelAuction(AUCTION_ID));
+        assertThrows(ResourceNotFoundException.class, () -> cancelAuctionServiceComponent.cancelAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -58,7 +58,7 @@ public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTe
         testAuctionEntity.setState(AuctionState.CANCELLED);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        cancelAuctionSubService.cancelAuction(AUCTION_ID);
+        cancelAuctionServiceComponent.cancelAuction(AUCTION_ID);
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -69,7 +69,7 @@ public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTe
         testAuctionEntity.setState(AuctionState.CLOSED);
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        assertThrows(InvalidParameterException.class, () -> cancelAuctionSubService.cancelAuction(AUCTION_ID));
+        assertThrows(InvalidParameterException.class, () -> cancelAuctionServiceComponent.cancelAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -81,7 +81,7 @@ public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTe
         testAuctionEntity.setStopTime(now().minus(1, ChronoUnit.MINUTES));
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        assertThrows(InvalidParameterException.class, () -> cancelAuctionSubService.cancelAuction(AUCTION_ID));
+        assertThrows(InvalidParameterException.class, () -> cancelAuctionServiceComponent.cancelAuction(AUCTION_ID));
 
         verify(auctionRepository, times(0)).save(any());
     }
@@ -94,6 +94,6 @@ public class CancelAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
         doThrow(new RuntimeException()).when(auctionRepository).save(testAuctionEntity);
 
-        assertThrows(BusinessException.class, () -> cancelAuctionSubService.cancelAuction(AUCTION_ID));
+        assertThrows(BusinessException.class, () -> cancelAuctionServiceComponent.cancelAuction(AUCTION_ID));
     }
 }

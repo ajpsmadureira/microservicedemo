@@ -14,14 +14,14 @@ import static org.mockito.Mockito.*;
 public class DeleteAuctionServiceComponentTest extends AuctionServiceComponentTest {
 
     @InjectMocks
-    private DeleteAuctionServiceComponent deleteAuctionSubService;
+    private DeleteAuctionServiceComponent deleteAuctionServiceComponent;
 
     @Test
     void deleteAuction_whenAllConditionsExist_shouldDeleteAuction() {
 
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
 
-        deleteAuctionSubService.deleteAuction(AUCTION_ID);
+        deleteAuctionServiceComponent.deleteAuction(AUCTION_ID);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class DeleteAuctionServiceComponentTest extends AuctionServiceComponentTe
 
         when(auctionRepository.findById(any())).thenThrow(new ResourceNotFoundException());
 
-        deleteAuctionSubService.deleteAuction(1);
+        deleteAuctionServiceComponent.deleteAuction(1);
 
         verify(auctionRepository, times(0)).deleteById(any());
     }
@@ -40,6 +40,6 @@ public class DeleteAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
         doThrow(new RuntimeException()).when(auctionRepository).deleteById(AUCTION_ID);
 
-        assertThrows(BusinessException.class, () -> deleteAuctionSubService.deleteAuction(AUCTION_ID));
+        assertThrows(BusinessException.class, () -> deleteAuctionServiceComponent.deleteAuction(AUCTION_ID));
     }
 }

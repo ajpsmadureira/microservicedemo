@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class CreateAuctionServiceComponentTest extends AuctionServiceComponentTest {
 
     @InjectMocks
-    private CreateAuctionServiceComponent createAuctionSubService;
+    private CreateAuctionServiceComponent createAuctionServiceComponent;
 
     @Test
     void createAuction_whenAllConditionsExist_shouldCreateAuction() {
@@ -26,7 +26,7 @@ public class CreateAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(auctionRepository.save(any())).thenReturn(testAuctionEntity);
         when(auctionEntityToAuctionMapper.map(any())).thenReturn(testAuction);
 
-        Auction auction = createAuctionSubService.createAuction(testAuction, testUser);
+        Auction auction = createAuctionServiceComponent.createAuction(testAuction, testUser);
 
         assertEquals(testAuction, auction);
 
@@ -47,7 +47,7 @@ public class CreateAuctionServiceComponentTest extends AuctionServiceComponentTe
 
         when(userRepository.findById(any())).thenThrow(new BusinessException());
 
-        assertThrows(BusinessException.class, () -> createAuctionSubService.createAuction(testAuction, testUser));
+        assertThrows(BusinessException.class, () -> createAuctionServiceComponent.createAuction(testAuction, testUser));
 
         verify(auctionRepository, times(0)).save(any());
         verify(auctionEntityToAuctionMapper, times(0)).map(any());
@@ -60,7 +60,7 @@ public class CreateAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(lotRepository.findById(any())).thenReturn(Optional.of(testLotEntity));
         when(auctionRepository.save(any())).thenThrow(new RuntimeException());
 
-        assertThrows(BusinessException.class, () -> createAuctionSubService.createAuction(testAuction, testUser));
+        assertThrows(BusinessException.class, () -> createAuctionServiceComponent.createAuction(testAuction, testUser));
 
         verify(auctionEntityToAuctionMapper, times(0)).map(any());
     }
@@ -73,6 +73,6 @@ public class CreateAuctionServiceComponentTest extends AuctionServiceComponentTe
         when(auctionRepository.save(any())).thenReturn(testAuctionEntity);
         when(auctionEntityToAuctionMapper.map(any())).thenThrow(new RuntimeException());
 
-        assertThrows(BusinessException.class, () -> createAuctionSubService.createAuction(testAuction, testUser));
+        assertThrows(BusinessException.class, () -> createAuctionServiceComponent.createAuction(testAuction, testUser));
     }
 }

@@ -12,52 +12,52 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AuctionServiceImpl implements AuctionService {
 
-    private final GetAuctionServiceComponent getAuctionSubService;
-    private final CreateAuctionServiceComponent createAuctionSubService;
-    private final UpdateAuctionServiceComponent updateAuctionSubService;
-    private final StartAuctionServiceComponent startAuctionSubService;
-    private final CancelAuctionServiceComponent cancelAuctionSubService;
-    private final DeleteAuctionServiceComponent deleteAuctionSubService;
+    private final GetAuctionServiceComponent getAuctionServiceComponent;
+    private final CreateAuctionServiceComponent createAuctionServiceComponent;
+    private final UpdateAuctionServiceComponent updateAuctionServiceComponent;
+    private final StartAuctionServiceComponent startAuctionServiceComponent;
+    private final CancelAuctionServiceComponent cancelAuctionServiceComponent;
+    private final DeleteAuctionServiceComponent deleteAuctionServiceComponent;
 
     @Override
     public List<Auction> getAllAuctions() {
 
-        return getAuctionSubService.getAllAuctions();
+        return getAuctionServiceComponent.getAllAuctions();
     }
 
     @Override
     public Auction getAuctionById(Integer id) {
 
-        return getAuctionSubService.getAuctionById(id);
+        return getAuctionServiceComponent.getAuctionById(id);
     }
 
     @Override
     public Auction createAuction(Auction auction, User currentUser) {
 
-        return createAuctionSubService.createAuction(auction, currentUser);
+        return createAuctionServiceComponent.createAuction(auction, currentUser);
     }
 
     @Override
     public Auction updateAuctionDetails(Integer id, Auction auction, User currentUser) {
 
-        return updateAuctionSubService.updateAuctionDetails(id, auction, currentUser);
+        return updateAuctionServiceComponent.updateAuctionDetails(id, auction, currentUser);
     }
 
     @Override
     public void startAuction(Integer id) {
 
-        startAuctionSubService.startAuction(id);
+        startAuctionServiceComponent.startAuction(id);
     }
 
     @Override
     public void cancelAuction(Integer id) {
 
-        cancelAuctionSubService.cancelAuction(id);
+        cancelAuctionServiceComponent.cancelAuction(id);
     }
 
     @Override
     public void deleteAuction(Integer id) {
 
-        deleteAuctionSubService.deleteAuction(id);
+        deleteAuctionServiceComponent.deleteAuction(id);
     }
 } 
