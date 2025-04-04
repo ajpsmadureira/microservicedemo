@@ -18,8 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static java.time.Instant.now;
 
@@ -93,16 +94,82 @@ public class AuctionServiceImpl implements AuctionService {
 
         AuctionEntity auctionEntity = findAuctionByIdOrThrowException(id);
 
-        Optional.ofNullable(auction.getStartTime()).ifPresent(auctionEntity::setStartTime);
+        updateStartTime(auction, auctionEntity);
 
-        Optional.ofNullable(auction.getStopTime()).ifPresent(auctionEntity::setStopTime);
+        updateStopTime(auction, auctionEntity);
+
+        validateStartAndStopTimes(auctionEntity);
+
+        updateSetLastModifiedBy(auctionEntity, currentUser);
+
+        return saveUpdatedAuctionEntity(auctionEntity);
+    }
+
+    private void updateStartTime(Auction auction, AuctionEntity auctionEntity) {
+
+        updateAuctionTime(
+                auction.getStartTime(),
+                auctionEntity.getStartTime(),
+                EnumSet.of(AuctionState.CREATED),
+                auctionEntity.getState(),
+                "start",
+                auctionEntity::setStartTime
+        );
+    }
+
+    private void updateStopTime(Auction auction, AuctionEntity auctionEntity) {
+
+        updateAuctionTime(
+                auction.getStopTime(),
+                auctionEntity.getStopTime(),
+                EnumSet.of(AuctionState.CREATED, AuctionState.ONGOING),
+                auctionEntity.getState(),
+                "stop",
+                auctionEntity::setStopTime
+        );
+    }
+
+    private void updateAuctionTime(
+            Instant newTime,
+            Instant currentTime,
+            Set<AuctionState> allowedStates,
+            AuctionState currentState,
+            String label,
+            Consumer<Instant> setter
+    ) {
+        Optional.ofNullable(newTime)
+                .filter(t -> !t.equals(currentTime))
+                .ifPresent(t -> {
+                    if (t.isBefore(now())) {
+                        throw new InvalidParameterException("Auction desired " + label + " time is in the past: " + t);
+                    }
+                    if (!allowedStates.contains(currentState)) {
+                        throw new InvalidParameterException("Auction " + label + " time cannot be updated because state is: " + currentState);
+                    }
+                    setter.accept(t);
+                });
+    }
+
+    private void validateStartAndStopTimes(AuctionEntity auctionEntity) {
+
+        if (Objects.nonNull(auctionEntity.getStartTime()) && Objects.nonNull(auctionEntity.getStopTime())) {
+            if (!auctionEntity.getStartTime().isBefore(auctionEntity.getStopTime())) {
+                throw new InvalidParameterException("Auction start time needs to be before stop time.");
+            }
+        }
+    }
+
+    private void updateSetLastModifiedBy(AuctionEntity auctionEntity, User currentUser) {
 
         UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
         auctionEntity.setLastModifiedBy(currentUserEntity);
+    }
+
+    private Auction saveUpdatedAuctionEntity(AuctionEntity auctionEntity) {
 
         try {
-            
+
             AuctionEntity updatedAuctionEntity = auctionRepository.save(auctionEntity);
 
             return auctionEntityToAuctionMapper.map(updatedAuctionEntity);

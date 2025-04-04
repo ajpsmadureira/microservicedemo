@@ -16,14 +16,19 @@ import com.auctions.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.*;
@@ -171,7 +176,8 @@ public class AuctionServiceTest {
         final Integer CREATED_BY = 1;
         final Integer MODIFIED_BY = 2;
 
-        when(auctionRepository.findById(CREATED_BY)).thenReturn(Optional.of(testAuctionEntity));
+        testAuctionEntity.setState(AuctionState.CREATED);
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
         User newUser = User.builder().id(MODIFIED_BY).build();
         UserEntity newUserEntity = new UserEntity();
         when(userRepository.findById(MODIFIED_BY)).thenReturn(Optional.of(newUserEntity));
@@ -179,8 +185,9 @@ public class AuctionServiceTest {
         when(auctionEntityToAuctionMapper.map(testAuctionEntity)).thenReturn(testAuction);
 
         Auction.AuctionBuilder actionBuilder = testAuction.toBuilder();
-        actionBuilder.startTime(now());
-        actionBuilder.stopTime(now());
+        Instant now = now();
+        actionBuilder.startTime(now.plus(1, ChronoUnit.MINUTES));
+        actionBuilder.stopTime(now.plus(2, ChronoUnit.MINUTES));
         Auction updatedTestAuction = actionBuilder.build();
 
         Auction auction = auctionService.updateAuctionDetails(CREATED_BY, updatedTestAuction, newUser);
@@ -202,6 +209,69 @@ public class AuctionServiceTest {
         when(auctionRepository.findById(any())).thenThrow(new ResourceNotFoundException());
 
         assertThrows(ResourceNotFoundException.class, () -> auctionService.updateAuctionDetails(1, testAuction, testUser));
+    }
+
+    static Stream<Arguments> startTimeStopTimeStateScenarios() {
+
+        Instant now = now();
+
+        return Stream.of(
+                Arguments.of("updateStartTimeWhenAuctionStateIsNotCreated",
+                        now.plus(1, ChronoUnit.MINUTES),
+                        now.plus(2, ChronoUnit.MINUTES),
+                        AuctionState.ONGOING,
+                        String.format("Auction start time cannot be updated because state is: %s", AuctionState.ONGOING)
+                ),
+                Arguments.of("updateStopTimeWhenAuctionStateIsClosed",
+                        now.plus(1, ChronoUnit.MINUTES),
+                        now.plus(2, ChronoUnit.MINUTES),
+                        AuctionState.CLOSED,
+                        String.format("Auction start time cannot be updated because state is: %s", AuctionState.CLOSED)
+                ),
+                Arguments.of("whenStartTimeIsEqualOrLaterThanStopTime",
+                        now.plus(1, ChronoUnit.MINUTES),
+                        now.plus(1, ChronoUnit.MINUTES),
+                        AuctionState.CREATED,
+                        "Auction start time needs to be before stop time."
+                ),
+                Arguments.of("whenStartTimeIsInThePast",
+                        now,
+                        now.plus(2, ChronoUnit.MINUTES),
+                        AuctionState.CREATED,
+                        String.format("Auction desired start time is in the past: %s", now)
+                ),
+                Arguments.of("whenStopTimeIsInThePast",
+                        now.plus(1, ChronoUnit.MINUTES),
+                        now,
+                        AuctionState.CREATED,
+                        String.format("Auction desired stop time is in the past: %s", now)
+                ));
+    }
+
+    @ParameterizedTest
+    @MethodSource("startTimeStopTimeStateScenarios")
+    void updateAuctionDetails_startTimeStopTimeStateScenarios_shouldThrowException(
+            String scenario,
+            Instant startTime,
+            Instant stopTime,
+            AuctionState auctionState,
+            String expectedErrorMessage) {
+
+        final Integer CREATED_BY = 1;
+        final Integer MODIFIED_BY = 2;
+
+        testAuctionEntity.setState(auctionState);
+        when(auctionRepository.findById(AUCTION_ID)).thenReturn(Optional.of(testAuctionEntity));
+        User newUser = User.builder().id(MODIFIED_BY).build();
+
+        Auction.AuctionBuilder actionBuilder = testAuction.toBuilder();
+        actionBuilder.startTime(startTime);
+        actionBuilder.stopTime(stopTime);
+        Auction updatedTestAuction = actionBuilder.build();
+
+        InvalidParameterException invalidParameterException = assertThrows(InvalidParameterException.class, () -> auctionService.updateAuctionDetails(CREATED_BY, updatedTestAuction, newUser));
+
+        assertEquals(expectedErrorMessage, invalidParameterException.getMessage());
     }
 
     @Test
