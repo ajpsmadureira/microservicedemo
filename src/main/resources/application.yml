@@ -30,3 +30,7 @@ management:
 springdoc:
   packages-to-scan: com.auctions.web.controller
   paths-to-match: /api/**
+
+task:
+  bid-updater:
+    cron: 0 * * * * *
