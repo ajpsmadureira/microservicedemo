@@ -13,7 +13,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
+import static java.time.Instant.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BidRepositoryIT extends AbstractRepositoryIT {
@@ -155,6 +158,38 @@ public class BidRepositoryIT extends AbstractRepositoryIT {
         BidEntity bidSaved = bidRepository.save(bid);
 
         assertEquals(1, bidRepository.findByLastModifiedBy(bidSaved.getLastModifiedBy()).size());
+    }
+
+    @Test
+    public void shouldUpdateBidsStateToOutdated() {
+
+        Instant now = now();
+        Instant instantInThePast = now.minus(1, ChronoUnit.MINUTES);
+        Instant instantInTheFuture = now.plus(1, ChronoUnit.MINUTES);
+
+        saveBidWithBidStateAndUntil(BidState.CREATED, null);
+        Integer bidIdToBeUpdated = saveBidWithBidStateAndUntil(BidState.CREATED, instantInThePast);
+        saveBidWithBidStateAndUntil(BidState.CREATED, instantInTheFuture);
+        saveBidWithBidStateAndUntil(BidState.OUTDATED, instantInThePast);
+        saveBidWithBidStateAndUntil(BidState.CANCELLED, instantInThePast);
+        saveBidWithBidStateAndUntil(BidState.ACCEPTED, instantInThePast);
+        saveBidWithBidStateAndUntil(BidState.REJECTED, instantInThePast);
+
+        assertEquals(1, bidRepository.updateBidsStateToOutdated());
+
+        entityManager.clear();
+
+        Optional<BidEntity> bidEntity = bidRepository.findById(bidIdToBeUpdated);
+        assertTrue(bidEntity.isPresent());
+        assertEquals(BidState.OUTDATED, bidEntity.get().getState());
+    }
+
+    private Integer saveBidWithBidStateAndUntil(BidState bidState, Instant until) {
+
+        BidEntity bidWithOutdatedState = getTestBidEntity();
+        bidWithOutdatedState.setUntil(until);
+        bidWithOutdatedState.setState(bidState);
+        return bidRepository.save(bidWithOutdatedState).getId();
     }
 
     private BidEntity getTestBidEntity() {
