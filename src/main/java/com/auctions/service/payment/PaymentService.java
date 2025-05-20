@@ -6,4 +6,5 @@ import com.auctions.domain.user.User;
 public interface PaymentService {
 
     Payment createPayment(Payment payment, User currentUser);
+    Payment getPaymentById(Integer id);
 }

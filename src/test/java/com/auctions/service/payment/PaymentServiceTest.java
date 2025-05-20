@@ -5,6 +5,7 @@ import com.auctions.domain.lot.Lot;
 import com.auctions.domain.payment.Payment;
 import com.auctions.domain.user.User;
 import com.auctions.service.payment.component.CreatePaymentServiceComponent;
+import com.auctions.service.payment.component.GetPaymentServiceComponent;
 import com.auctions.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,9 @@ public class PaymentServiceTest {
 
     @Mock
     private CreatePaymentServiceComponent createPaymentServiceComponent;
+
+    @Mock
+    private GetPaymentServiceComponent getPaymentServiceComponent;
 
     @InjectMocks
     private PaymentServiceImpl paymentService;
@@ -48,5 +52,13 @@ public class PaymentServiceTest {
         when(createPaymentServiceComponent.createPayment(testPayment, testUser)).thenReturn(testPayment);
 
         assertEquals(testPayment, paymentService.createPayment(testPayment, testUser));
+    }
+
+    @Test
+    void getPaymentById() {
+
+        when(getPaymentServiceComponent.getPaymentById(testPayment.getId())).thenReturn(testPayment);
+
+        assertEquals(testPayment, paymentService.getPaymentById(testPayment.getId()));
     }
 }
