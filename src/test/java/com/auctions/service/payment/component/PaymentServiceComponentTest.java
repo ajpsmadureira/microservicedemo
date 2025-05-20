@@ -4,14 +4,12 @@ import com.auctions.domain.auction.Auction;
 import com.auctions.domain.lot.Lot;
 import com.auctions.domain.payment.Payment;
 import com.auctions.domain.user.User;
-import com.auctions.mapper.auction.AuctionEntityToAuctionMapper;
 import com.auctions.mapper.payment.PaymentEntityToPaymentMapper;
 import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.LotEntity;
 import com.auctions.persistence.entity.PaymentEntity;
 import com.auctions.persistence.entity.UserEntity;
 import com.auctions.persistence.repository.AuctionRepository;
-import com.auctions.persistence.repository.LotRepository;
 import com.auctions.persistence.repository.PaymentRepository;
 import com.auctions.persistence.repository.UserRepository;
 import com.auctions.service.payment.gateway.PaymentGateway;
@@ -23,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class PaymentServiceComponentTest {
+
+    static final Integer PAYMENT_ID = 1;
 
     @Mock
     UserRepository userRepository;

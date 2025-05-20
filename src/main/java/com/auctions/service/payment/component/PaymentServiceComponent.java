@@ -4,6 +4,7 @@ import com.auctions.exception.BusinessException;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.payment.PaymentEntityToPaymentMapper;
 import com.auctions.persistence.entity.AuctionEntity;
+import com.auctions.persistence.entity.PaymentEntity;
 import com.auctions.persistence.entity.UserEntity;
 import com.auctions.persistence.repository.AuctionRepository;
 import com.auctions.persistence.repository.PaymentRepository;
@@ -28,5 +29,10 @@ abstract class PaymentServiceComponent {
     AuctionEntity findAuctionByIdOrThrowException(Integer id) {
 
         return auctionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find auction with id: " + id));
+    }
+
+    PaymentEntity findPaymentByIdOrThrowException(Integer id) {
+
+        return paymentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Failed to find payment with id: " + id));
     }
 }

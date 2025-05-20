@@ -4,6 +4,7 @@ import com.auctions.domain.auction.Auction;
 import com.auctions.domain.lot.Lot;
 import com.auctions.domain.payment.Payment;
 import com.auctions.domain.user.User;
+import com.auctions.service.payment.component.CancelPaymentServiceComponent;
 import com.auctions.service.payment.component.CreatePaymentServiceComponent;
 import com.auctions.service.payment.component.GetPaymentServiceComponent;
 import com.auctions.util.TestDataFactory;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +28,9 @@ public class PaymentServiceTest {
 
     @Mock
     private GetPaymentServiceComponent getPaymentServiceComponent;
+
+    @Mock
+    private CancelPaymentServiceComponent cancelPaymentServiceComponent;
 
     @InjectMocks
     private PaymentServiceImpl paymentService;
@@ -60,5 +65,13 @@ public class PaymentServiceTest {
         when(getPaymentServiceComponent.getPaymentById(testPayment.getId())).thenReturn(testPayment);
 
         assertEquals(testPayment, paymentService.getPaymentById(testPayment.getId()));
+    }
+
+    @Test
+    void cancelPayment() {
+
+        paymentService.cancelPayment(testPayment.getId());
+
+        verify(cancelPaymentServiceComponent).cancelPayment(testPayment.getId());
     }
 }

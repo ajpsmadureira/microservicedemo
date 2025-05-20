@@ -5,4 +5,5 @@ import java.math.BigDecimal;
 public interface PaymentGateway {
 
     String createPaymentLink(BigDecimal amount);
+    void cancelPayment(String link);
 }

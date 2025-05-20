@@ -14,4 +14,10 @@ class AdyenPaymentGateway implements PaymentGateway {
 
         return "https://adyen";
     }
+
+    @Override
+    public void cancelPayment(String link) {
+
+        // TODO
+    }
 }

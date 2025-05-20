@@ -56,7 +56,7 @@ CREATE TABLE bids
    updated_at           TIMESTAMPTZ NOT NULL
 );
 
-CREATE TYPE PAYMENT_STATE AS ENUM ('CREATED');
+CREATE TYPE PAYMENT_STATE AS ENUM ('CREATED', 'CANCELLED', 'DONE');
 
 CREATE CAST (character varying AS PAYMENT_STATE) with inout as assignment;
 

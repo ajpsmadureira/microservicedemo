@@ -7,4 +7,5 @@ public interface PaymentService {
 
     Payment createPayment(Payment payment, User currentUser);
     Payment getPaymentById(Integer id);
+    void cancelPayment(Integer id);
 }
