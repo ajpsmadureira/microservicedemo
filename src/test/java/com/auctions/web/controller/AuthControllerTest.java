@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 import com.auctions.security.CustomUserDetailsService;
 import com.auctions.service.auth.AuthService;
 import com.auctions.util.TestDataFactory;

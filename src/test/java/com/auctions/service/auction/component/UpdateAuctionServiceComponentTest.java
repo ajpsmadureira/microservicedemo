@@ -1,8 +1,8 @@
 package com.auctions.service.auction.component;
 
-import com.auctions.domain.Auction;
-import com.auctions.domain.AuctionState;
-import com.auctions.domain.User;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.auction.AuctionState;
+import com.auctions.domain.user.User;
 import com.auctions.exception.BusinessException;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;

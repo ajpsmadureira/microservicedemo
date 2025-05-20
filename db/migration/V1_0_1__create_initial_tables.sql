@@ -55,3 +55,19 @@ CREATE TABLE bids
    created_at           TIMESTAMPTZ NOT NULL,
    updated_at           TIMESTAMPTZ NOT NULL
 );
+
+CREATE TYPE PAYMENT_STATE AS ENUM ('CREATED');
+
+CREATE CAST (character varying AS PAYMENT_STATE) with inout as assignment;
+
+CREATE TABLE payments
+(
+   id                   SERIAL PRIMARY KEY,
+   state                PAYMENT_STATE NOT NULL,
+   link                 VARCHAR(200) NOT NULL,
+   auction              SERIAL references auctions NOT NULL,
+   created_by           SERIAL references users NOT NULL,
+   last_modified_by     SERIAL references users NOT NULL,
+   created_at           TIMESTAMPTZ NOT NULL,
+   updated_at           TIMESTAMPTZ NOT NULL
+);

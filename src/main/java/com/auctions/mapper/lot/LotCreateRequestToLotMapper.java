@@ -1,6 +1,6 @@
 package com.auctions.mapper.lot;
 
-import com.auctions.domain.Lot;
+import com.auctions.domain.lot.Lot;
 import com.auctions.web.api.lot.LotCreateRequest;
 import com.auctions.mapper.Mapper;
 import org.springframework.stereotype.Component;

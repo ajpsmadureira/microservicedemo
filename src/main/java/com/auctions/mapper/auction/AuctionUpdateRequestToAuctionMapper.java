@@ -1,6 +1,6 @@
 package com.auctions.mapper.auction;
 
-import com.auctions.domain.Auction;
+import com.auctions.domain.auction.Auction;
 import com.auctions.mapper.Mapper;
 import com.auctions.web.api.auction.AuctionUpdateRequest;
 import org.springframework.stereotype.Component;

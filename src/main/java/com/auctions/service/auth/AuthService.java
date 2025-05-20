@@ -1,6 +1,6 @@
 package com.auctions.service.auth;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 
 public interface AuthService {
 

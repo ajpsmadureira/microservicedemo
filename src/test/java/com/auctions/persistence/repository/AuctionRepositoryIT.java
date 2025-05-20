@@ -1,7 +1,7 @@
 package com.auctions.persistence.repository;
 
-import com.auctions.domain.AuctionState;
-import com.auctions.domain.BidState;
+import com.auctions.domain.auction.AuctionState;
+import com.auctions.domain.bid.BidState;
 import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.BidEntity;
 import com.auctions.persistence.entity.LotEntity;

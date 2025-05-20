@@ -1,6 +1,7 @@
 package com.auctions.service.lot.component;
 
-import com.auctions.domain.*;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.user.User;
 import com.auctions.exception.BusinessException;
 import com.auctions.mapper.lot.LotEntityToLotMapper;
 import com.auctions.persistence.entity.LotEntity;

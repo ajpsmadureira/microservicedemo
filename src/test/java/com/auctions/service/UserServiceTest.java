@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.user.UserEntityToUserMapper;

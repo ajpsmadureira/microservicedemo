@@ -1,4 +1,4 @@
-package com.auctions.domain;
+package com.auctions.domain.auction;
 
 public enum AuctionState {
 

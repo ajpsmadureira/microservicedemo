@@ -1,9 +1,9 @@
 package com.auctions.web.controller;
 
-import com.auctions.domain.Auction;
-import com.auctions.domain.Bid;
-import com.auctions.domain.Lot;
-import com.auctions.domain.User;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.bid.Bid;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.user.User;
 import com.auctions.service.auth.AuthService;
 import com.auctions.service.bid.BidService;
 import com.auctions.util.TestDataFactory;

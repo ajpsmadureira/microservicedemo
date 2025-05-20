@@ -1,6 +1,6 @@
 package com.auctions.persistence.entity;
 
-import com.auctions.domain.AuctionState;
+import com.auctions.domain.auction.AuctionState;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package com.auctions.service.lot.component;
 
-import com.auctions.domain.Lot;
+import com.auctions.domain.lot.Lot;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.mapper.lot.LotEntityToLotMapper;
 import com.auctions.persistence.entity.LotEntity;

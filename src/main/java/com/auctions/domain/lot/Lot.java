@@ -1,21 +1,17 @@
-package com.auctions.domain;
+package com.auctions.domain.lot;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.time.Instant;
-
 @Getter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-public class Auction {
+public class Lot {
 
     private final Integer id;
-    private final Instant startTime;
-    private final Instant stopTime;
-    private final Integer lotId;
-    private final AuctionState state;
+    private final String name;
+    private final String surname;
     private final Integer createdByUserId;
     private final Integer lastModifiedByUserId;
 }

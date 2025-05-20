@@ -1,10 +1,14 @@
 package com.auctions.util;
 
-import com.auctions.domain.*;
-import com.auctions.persistence.entity.AuctionEntity;
-import com.auctions.persistence.entity.BidEntity;
-import com.auctions.persistence.entity.LotEntity;
-import com.auctions.persistence.entity.UserEntity;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.auction.AuctionState;
+import com.auctions.domain.bid.Bid;
+import com.auctions.domain.bid.BidState;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.payment.Payment;
+import com.auctions.domain.payment.PaymentState;
+import com.auctions.domain.user.User;
+import com.auctions.persistence.entity.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -33,6 +37,10 @@ public class TestDataFactory {
     private static final BigDecimal BID_AMOUNT = BigDecimal.valueOf(100);
     private static final Instant BID_TIMESTAMP = Instant.ofEpochMilli(1739278311);
     private static final Instant BID_UNTIL = now().plus(5, ChronoUnit.MINUTES);
+
+    private static final BigDecimal PAYMENT_AMOUNT = BigDecimal.valueOf(100);
+    private static final Instant PAYMENT_TIMESTAMP = Instant.ofEpochMilli(1739278311);
+    private static final String PAYMENT_LINK = "http://adyen";
     
     public static User createTestUser() {
 
@@ -114,6 +122,7 @@ public class TestDataFactory {
 
         AuctionEntity auctionEntity = new AuctionEntity();
 
+        auctionEntity.setId(1);
         auctionEntity.setStartTime(AUCTION_START_TIME);
         auctionEntity.setStopTime(AUCTION_STOP_TIME);
         auctionEntity.setLot(lotEntity);
@@ -153,5 +162,33 @@ public class TestDataFactory {
         bidEntity.setUpdatedAt(BID_TIMESTAMP);
 
         return bidEntity;
+    }
+
+    public static Payment createTestPayment(Auction auction) {
+
+        return Payment.builder()
+                .id(1)
+                .amount(PAYMENT_AMOUNT)
+                .state(PaymentState.CREATED)
+                .auctionId(auction.getId())
+                .link(PAYMENT_LINK)
+                .build();
+    }
+
+    public static PaymentEntity createTestPaymentEntity(UserEntity userEntity, AuctionEntity auctionEntity) {
+
+        PaymentEntity paymentEntity = new PaymentEntity();
+
+        paymentEntity.setId(1);
+        paymentEntity.setAmount(PAYMENT_AMOUNT);
+        paymentEntity.setAuction(auctionEntity);
+        paymentEntity.setState(PaymentState.CREATED);
+        paymentEntity.setCreatedBy(userEntity);
+        paymentEntity.setLastModifiedBy(userEntity);
+        paymentEntity.setCreatedAt(PAYMENT_TIMESTAMP);
+        paymentEntity.setUpdatedAt(PAYMENT_TIMESTAMP);
+        paymentEntity.setLink(PAYMENT_LINK);
+
+        return paymentEntity;
     }
 } 

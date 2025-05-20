@@ -1,6 +1,6 @@
 package com.auctions.service.auction.component;
 
-import com.auctions.domain.AuctionState;
+import com.auctions.domain.auction.AuctionState;
 import com.auctions.exception.BusinessException;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.mapper.auction.AuctionEntityToAuctionMapper;

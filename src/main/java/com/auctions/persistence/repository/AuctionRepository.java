@@ -1,6 +1,6 @@
 package com.auctions.persistence.repository;
 
-import com.auctions.domain.BidState;
+import com.auctions.domain.bid.BidState;
 import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +20,16 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Integer>
     @Modifying
     @Query(value = "UPDATE bids SET state = :#{#state.name()} WHERE state = 'CREATED' AND bids.auction = :id", nativeQuery = true)
     void updateAuctionCreatedBidsState(@Param("state") BidState bidState, @Param("id") Integer auctionId);
-} 
+
+    // TODO
+    /*@Modifying®
+    @Query(value = """
+            DEFINE now = now();
+            UPDATE bids SET state = 'REJECTED'
+                WHERE state = 'CREATED' AND auction IN
+                    (SELECT id FROM auctions WHERE state = 'ONGOING' AND stop_time < &now);
+            UPDATE auctions SET state = 'CLOSED'
+                WHERE state = 'ONGOING' AND stop_time < &now;
+            """, nativeQuery = true)
+    int updateAuctionsStateToClosed();*/
+}

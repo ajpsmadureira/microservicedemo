@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 import com.auctions.service.user.UserService;
 import com.auctions.util.TestDataFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;

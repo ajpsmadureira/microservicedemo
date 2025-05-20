@@ -1,8 +1,8 @@
 package com.auctions.mapper.bid;
 
-import com.auctions.domain.Auction;
-import com.auctions.domain.Bid;
-import com.auctions.domain.User;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.bid.Bid;
+import com.auctions.domain.user.User;
 import com.auctions.mapper.Mapper;
 import com.auctions.mapper.auction.AuctionEntityToAuctionMapper;
 import com.auctions.mapper.user.UserEntityToUserMapper;

@@ -1,6 +1,6 @@
 package com.auctions.service.bid.component;
 
-import com.auctions.domain.Bid;
+import com.auctions.domain.bid.Bid;
 import com.auctions.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

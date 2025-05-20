@@ -1,6 +1,8 @@
 package com.auctions.service.auction;
 
-import com.auctions.domain.*;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.user.User;
 import com.auctions.service.auction.component.*;
 import com.auctions.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;

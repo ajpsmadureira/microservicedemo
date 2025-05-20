@@ -1,6 +1,7 @@
 package com.auctions.service.lot;
 
-import com.auctions.domain.*;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.user.User;
 import com.auctions.service.lot.component.CreateLotServiceComponent;
 import com.auctions.service.lot.component.DeleteLotServiceComponent;
 import com.auctions.service.lot.component.GetLotServiceComponent;

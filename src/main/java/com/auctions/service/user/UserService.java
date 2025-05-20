@@ -1,6 +1,6 @@
 package com.auctions.service.user;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package com.auctions.service.bid;
 
-import com.auctions.domain.*;
+import com.auctions.domain.bid.Bid;
+import com.auctions.domain.user.User;
 import com.auctions.service.bid.component.AcceptBidServiceComponent;
 import com.auctions.service.bid.component.CancelBidServiceComponent;
 import com.auctions.service.bid.component.CreateBidServiceComponent;

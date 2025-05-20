@@ -1,7 +1,7 @@
 package com.auctions.mapper.auction;
 
-import com.auctions.domain.Auction;
-import com.auctions.domain.User;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.user.User;
 import com.auctions.mapper.Mapper;
 import com.auctions.mapper.user.UserEntityToUserMapper;
 import com.auctions.persistence.entity.AuctionEntity;

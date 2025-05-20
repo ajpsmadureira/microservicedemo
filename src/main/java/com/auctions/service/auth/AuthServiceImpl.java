@@ -12,7 +12,7 @@ import com.auctions.persistence.entity.UserEntity;
 import com.auctions.exception.ResourceNotFoundException;
 import com.auctions.persistence.repository.UserRepository;
 import com.auctions.security.JwtTokenProvider;
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
 

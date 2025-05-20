@@ -1,6 +1,6 @@
 package com.auctions.service.auction.component;
 
-import com.auctions.domain.*;
+import com.auctions.domain.auction.Auction;
 import com.auctions.exception.BusinessException;
 import com.auctions.persistence.entity.AuctionEntity;
 import org.junit.jupiter.api.Test;

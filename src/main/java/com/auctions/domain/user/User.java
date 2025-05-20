@@ -1,4 +1,4 @@
-package com.auctions.domain;
+package com.auctions.domain.user;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

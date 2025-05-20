@@ -1,6 +1,6 @@
 package com.auctions.mapper.user;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 import com.auctions.web.api.user.UserResponse;
 import com.auctions.mapper.Mapper;
 import org.springframework.stereotype.Component;

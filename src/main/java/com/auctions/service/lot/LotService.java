@@ -1,7 +1,7 @@
 package com.auctions.service.lot;
 
-import com.auctions.domain.Lot;
-import com.auctions.domain.User;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.user.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;

@@ -1,6 +1,6 @@
 package com.auctions.mapper.bid;
 
-import com.auctions.domain.Bid;
+import com.auctions.domain.bid.Bid;
 import com.auctions.mapper.Mapper;
 import com.auctions.web.api.bid.BidResponse;
 import org.springframework.stereotype.Component;

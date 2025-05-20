@@ -1,6 +1,6 @@
 package com.auctions.service.bid.component;
 
-import com.auctions.domain.BidState;
+import com.auctions.domain.bid.BidState;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;

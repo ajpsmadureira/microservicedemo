@@ -1,8 +1,8 @@
 package com.auctions.service.auction.component;
 
-import com.auctions.domain.Auction;
-import com.auctions.domain.Lot;
-import com.auctions.domain.User;
+import com.auctions.domain.auction.Auction;
+import com.auctions.domain.lot.Lot;
+import com.auctions.domain.user.User;
 import com.auctions.mapper.auction.AuctionEntityToAuctionMapper;
 import com.auctions.persistence.entity.AuctionEntity;
 import com.auctions.persistence.entity.LotEntity;

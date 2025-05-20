@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.auctions.domain.User;
+import com.auctions.domain.user.User;
 import com.auctions.exception.InvalidParameterException;
 import com.auctions.persistence.entity.UserEntity;
 import com.auctions.mapper.user.UserEntityToUserMapper;
