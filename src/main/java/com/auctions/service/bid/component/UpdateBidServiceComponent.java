@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import static java.time.Instant.now;
 
 @Component
-public class AcceptBidServiceComponent extends BidServiceComponent {
+public class UpdateBidServiceComponent extends BidServiceComponent {
 
-    public AcceptBidServiceComponent(UserRepository userRepository, AuctionRepository auctionRepository, BidRepository bidRepository, BidEntityToBidMapper bidEntityToBidMapper) {
+    public UpdateBidServiceComponent(UserRepository userRepository, AuctionRepository auctionRepository, BidRepository bidRepository, BidEntityToBidMapper bidEntityToBidMapper) {
         super(userRepository, auctionRepository, bidRepository, bidEntityToBidMapper);
     }
 
@@ -65,5 +65,11 @@ public class AcceptBidServiceComponent extends BidServiceComponent {
 
             throw new BusinessException("Failed to accept bid: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    public int updateBidsStateToOutdated() {
+
+        return bidRepository.updateBidsStateToOutdated();
     }
 }

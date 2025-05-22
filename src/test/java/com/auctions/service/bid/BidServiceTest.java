@@ -4,10 +4,10 @@ import com.auctions.domain.auction.Auction;
 import com.auctions.domain.bid.Bid;
 import com.auctions.domain.lot.Lot;
 import com.auctions.domain.user.User;
-import com.auctions.service.bid.component.AcceptBidServiceComponent;
 import com.auctions.service.bid.component.CancelBidServiceComponent;
 import com.auctions.service.bid.component.CreateBidServiceComponent;
 import com.auctions.service.bid.component.GetBidServiceComponent;
+import com.auctions.service.bid.component.UpdateBidServiceComponent;
 import com.auctions.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class BidServiceTest {
 
     @Mock
-    private AcceptBidServiceComponent acceptBidServiceComponent;
+    private UpdateBidServiceComponent updateBidServiceComponent;
 
     @Mock
     private CancelBidServiceComponent cancelBidServiceComponent;
@@ -95,6 +95,14 @@ class BidServiceTest {
 
         bidService.acceptBid(testBid.getId());
 
-        verify(acceptBidServiceComponent).acceptBid(testBid.getId());
+        verify(updateBidServiceComponent).acceptBid(testBid.getId());
+    }
+
+    @Test
+    void updateBidsStateToOutdated() {
+
+        bidService.updateBidsStateToOutdated();
+
+        verify(updateBidServiceComponent).updateBidsStateToOutdated();
     }
 } 

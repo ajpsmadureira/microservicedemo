@@ -12,4 +12,5 @@ public interface BidService {
     Bid createBid(Bid bid, User currentUser);
     void acceptBid(Integer id);
     void cancelBid(Integer id);
+    int updateBidsStateToOutdated();
 }

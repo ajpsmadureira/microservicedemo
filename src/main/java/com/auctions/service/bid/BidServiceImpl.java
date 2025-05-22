@@ -2,13 +2,12 @@ package com.auctions.service.bid;
 
 import com.auctions.domain.bid.Bid;
 import com.auctions.domain.user.User;
-import com.auctions.service.bid.component.AcceptBidServiceComponent;
 import com.auctions.service.bid.component.CancelBidServiceComponent;
 import com.auctions.service.bid.component.CreateBidServiceComponent;
 import com.auctions.service.bid.component.GetBidServiceComponent;
+import com.auctions.service.bid.component.UpdateBidServiceComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class BidServiceImpl implements BidService {
     private final GetBidServiceComponent getBidServiceComponent;
     private final CreateBidServiceComponent createBidServiceComponent;
     private final CancelBidServiceComponent cancelBidServiceComponent;
-    private final AcceptBidServiceComponent acceptBidServiceComponent;
+    private final UpdateBidServiceComponent updateBidServiceComponent;
 
     @Override
     public List<Bid> getAllBids() {
@@ -33,21 +32,27 @@ public class BidServiceImpl implements BidService {
         return getBidServiceComponent.getBidById(id);
     }
 
-    @Transactional
+    @Override
     public Bid createBid(Bid bid, User currentUser) {
 
         return createBidServiceComponent.createBid(bid, currentUser);
     }
 
-    @Transactional
+    @Override
     public void cancelBid(Integer id) {
 
         cancelBidServiceComponent.cancelBid(id);
     }
 
-    @Transactional
+    @Override
+    public int updateBidsStateToOutdated() {
+
+        return updateBidServiceComponent.updateBidsStateToOutdated();
+    }
+
+    @Override
     public void acceptBid(Integer id) {
 
-        acceptBidServiceComponent.acceptBid(id);
+        updateBidServiceComponent.acceptBid(id);
     }
 } 

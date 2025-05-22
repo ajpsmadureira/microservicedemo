@@ -1,6 +1,6 @@
 package com.auctions.task.bid;
 
-import com.auctions.persistence.repository.BidRepository;
+import com.auctions.service.bid.BidService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,13 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class BidTask {
 
-    // TODO: refactor to not use repositories but services
-    private final BidRepository bidRepository;
+    private final BidService bidService;
 
     @Scheduled(cron = "${task.bid-updater.cron}")
     @Transactional
     public void updateStateToOutdated() {
 
-        log.info("Updated {} bids to outdated", bidRepository.updateBidsStateToOutdated());
+        log.info("Updated {} bids to outdated", bidService.updateBidsStateToOutdated());
     }
 }

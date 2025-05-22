@@ -17,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
+public class UpdateBidServiceComponentTest extends BidServiceComponentTest {
 
     @InjectMocks
-    private AcceptBidServiceComponent acceptBidServiceComponent;
+    private UpdateBidServiceComponent updateBidServiceComponent;
 
     @Test
     void acceptBid_whenBidDoesNotExist_shouldThrowException() {
 
         when(bidRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(ResourceNotFoundException.class, () -> updateBidServiceComponent.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
@@ -39,7 +39,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         testBidEntity.setState(BidState.ACCEPTED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
-        acceptBidServiceComponent.acceptBid(1);
+        updateBidServiceComponent.acceptBid(1);
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
@@ -51,7 +51,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
-        acceptBidServiceComponent.acceptBid(1);
+        updateBidServiceComponent.acceptBid(1);
 
         verify(bidRepository).save(testBidEntity);
         assertEquals(BidState.ACCEPTED, testBidEntity.getState());
@@ -69,7 +69,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         testBidEntity.setUntil(now().minus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
-        assertThrows(InvalidParameterException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(InvalidParameterException.class, () -> updateBidServiceComponent.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).save(any());
@@ -81,7 +81,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
 
         testBidEntity.setState(BidState.CANCELLED);
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
-        assertThrows(InvalidParameterException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(InvalidParameterException.class, () -> updateBidServiceComponent.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).save(any());
@@ -95,7 +95,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         testBidEntity.setUntil(now().plus(1, ChronoUnit.MINUTES));
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
 
-        assertThrows(InvalidParameterException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(InvalidParameterException.class, () -> updateBidServiceComponent.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).save(any());
@@ -109,7 +109,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
         when(auctionRepository.save(any())).thenThrow(new RuntimeException());
 
-        assertThrows(BusinessException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(BusinessException.class, () -> updateBidServiceComponent.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
         verify(auctionRepository, times(0)).updateAuctionCreatedBidsState(any(), any());
@@ -122,7 +122,7 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
         doThrow(new RuntimeException()).when(auctionRepository).updateAuctionCreatedBidsState(any(), any());
 
-        assertThrows(BusinessException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(BusinessException.class, () -> updateBidServiceComponent.acceptBid(1));
 
         verify(bidRepository, times(0)).save(any());
     }
@@ -134,6 +134,14 @@ public class AcceptBidServiceComponentTest extends BidServiceComponentTest {
         when(bidRepository.findById(any())).thenReturn(Optional.ofNullable(testBidEntity));
         when(bidRepository.save(any())).thenThrow(new RuntimeException());
 
-        assertThrows(BusinessException.class, () -> acceptBidServiceComponent.acceptBid(1));
+        assertThrows(BusinessException.class, () -> updateBidServiceComponent.acceptBid(1));
+    }
+
+    @Test
+    void updateBidsStateToOutdated() {
+
+        updateBidServiceComponent.updateBidsStateToOutdated();
+
+        verify(bidRepository).updateBidsStateToOutdated();
     }
 }

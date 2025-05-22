@@ -1,6 +1,6 @@
 package com.auctions.task.bid;
 
-import com.auctions.persistence.repository.BidRepository;
+import com.auctions.service.bid.BidService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 public class BidTaskTest {
 
     @Mock
-    private BidRepository bidRepository;
+    private BidService bidService;
 
     @InjectMocks
     private BidTask bidTask;
@@ -23,6 +23,6 @@ public class BidTaskTest {
 
         bidTask.updateStateToOutdated();
 
-        verify(bidRepository).updateBidsStateToOutdated();
+        verify(bidService).updateBidsStateToOutdated();
     }
 }
