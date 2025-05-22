@@ -65,6 +65,7 @@ CREATE TABLE payments
    id                   SERIAL PRIMARY KEY,
    state                PAYMENT_STATE NOT NULL,
    link                 VARCHAR(200) NOT NULL,
+   amount               DECIMAL NOT NULL,
    auction              SERIAL references auctions NOT NULL,
    created_by           SERIAL references users NOT NULL,
    last_modified_by     SERIAL references users NOT NULL,

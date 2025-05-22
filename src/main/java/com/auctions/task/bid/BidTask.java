@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class BidTask {
 
+    // TODO: refactor to not use repositories but services
     private final BidRepository bidRepository;
 
     @Scheduled(cron = "${task.bid-updater.cron}")

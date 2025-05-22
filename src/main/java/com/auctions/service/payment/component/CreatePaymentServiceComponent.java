@@ -15,6 +15,8 @@ import com.auctions.service.payment.gateway.PaymentGateway;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Component
 public class CreatePaymentServiceComponent extends PaymentServiceComponent {
 
@@ -29,7 +31,9 @@ public class CreatePaymentServiceComponent extends PaymentServiceComponent {
 
             UserEntity currentUserEntity = findUserByIdOrThrowException(currentUser.getId());
 
-            String link = paymentGateway.createPaymentLink(payment.getAmount());
+            BigDecimal amount = payment.getAmount();
+
+            String link = paymentGateway.createPaymentLink(amount);
 
             AuctionEntity auctionEntity = findAuctionByIdOrThrowException(payment.getAuctionId());
 
@@ -38,7 +42,7 @@ public class CreatePaymentServiceComponent extends PaymentServiceComponent {
             paymentEntity.setState(PaymentState.CREATED);
             paymentEntity.setAuction(auctionEntity);
             paymentEntity.setLink(link);
-            paymentEntity.setAmount(payment.getAmount());
+            paymentEntity.setAmount(amount);
             paymentEntity.setCreatedBy(currentUserEntity);
             paymentEntity.setLastModifiedBy(currentUserEntity);
 

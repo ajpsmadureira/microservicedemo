@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.mockito.Mockito.verify;
@@ -65,6 +67,14 @@ public class PaymentServiceTest {
         when(getPaymentServiceComponent.getPaymentById(testPayment.getId())).thenReturn(testPayment);
 
         assertEquals(testPayment, paymentService.getPaymentById(testPayment.getId()));
+    }
+
+    @Test
+    void getPaymentByAuctionId() {
+
+        when(getPaymentServiceComponent.getPaymentsByAuctionId(testPayment.getId())).thenReturn(List.of(testPayment));
+
+        assertEquals(testPayment, paymentService.getPaymentsByAuctionId(testPayment.getAuctionId()).get(0));
     }
 
     @Test

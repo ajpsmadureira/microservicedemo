@@ -8,6 +8,8 @@ import com.auctions.service.payment.component.GetPaymentServiceComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -26,6 +28,12 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment getPaymentById(Integer id) {
 
         return getPaymentServiceComponent.getPaymentById(id);
+    }
+
+    @Override
+    public List<Payment> getPaymentsByAuctionId(Integer id) {
+
+        return getPaymentServiceComponent.getPaymentsByAuctionId(id);
     }
 
     @Override

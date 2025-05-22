@@ -4,6 +4,7 @@ import com.auctions.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +23,7 @@ public class GetPaymentServiceComponentTest extends PaymentServiceComponentTest 
         when(paymentRepository.findById(any())).thenReturn(Optional.of(testPaymentEntity));
         when(paymentEntityToPaymentMapper.map(any())).thenReturn(testPayment);
 
-        assertEquals(testPayment, getPaymentServiceComponent.getPaymentById(1));
+        assertEquals(testPayment, getPaymentServiceComponent.getPaymentById(testPaymentEntity.getId()));
 
         verify(paymentEntityToPaymentMapper).map(testPaymentEntity);
     }
@@ -32,8 +33,19 @@ public class GetPaymentServiceComponentTest extends PaymentServiceComponentTest 
 
         when(paymentRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> getPaymentServiceComponent.getPaymentById(1));
+        assertThrows(ResourceNotFoundException.class, () -> getPaymentServiceComponent.getPaymentById(testPaymentEntity.getId()));
 
         verify(paymentEntityToPaymentMapper, times(0)).map(any());
+    }
+
+    @Test
+    void getPaymentsByAuctionId() {
+
+        when(paymentRepository.findByAuctionId(any())).thenReturn(List.of(testPaymentEntity));
+        when(paymentEntityToPaymentMapper.map(any())).thenReturn(testPayment);
+
+        assertEquals(testPayment, getPaymentServiceComponent.getPaymentsByAuctionId(testPaymentEntity.getAuction().getId()).get(0));
+
+        verify(paymentEntityToPaymentMapper).map(testPaymentEntity);
     }
 }

@@ -34,3 +34,5 @@ springdoc:
 task:
   bid-updater:
     cron: 0 * * * * *
+  payment-create:
+    cron: 0 * * * * *
